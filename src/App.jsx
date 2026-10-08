@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react'
 import './App.css'
 
@@ -8,6 +7,8 @@ import {
   Route,
   useLocation,
 } from 'react-router-dom'
+
+import { Menu, X } from 'lucide-react'
 
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
@@ -52,6 +53,8 @@ function AppLayout({
 }) {
   const location = useLocation()
 
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
   // Old auth routes ko temporarily alag rakha hai
   const authPages = [
     '/login',
@@ -64,15 +67,24 @@ function AppLayout({
   const isAuthPage =
     authPages.includes(location.pathname)
 
+
+  // Route change hone par mobile sidebar close
+  useEffect(() => {
+    setSidebarOpen(false)
+  }, [location.pathname])
+
+
   // Login/Signup modal open karo
   const openAuthModal = (mode) => {
     setAuthMode(mode)
   }
 
+
   // Modal close karo
   const closeAuthModal = () => {
     setAuthMode(null)
   }
+
 
   return (
     <div className="app">
@@ -85,13 +97,49 @@ function AppLayout({
         />
       )}
 
+
+      {!isAuthPage && (
+        <>
+          <button
+            type="button"
+            className="mobile-menu-button"
+            onClick={() =>
+              setSidebarOpen((prev) => !prev)
+            }
+            aria-label="Toggle navigation"
+          >
+            {sidebarOpen ? (
+              <X size={21} />
+            ) : (
+              <Menu size={21} />
+            )}
+          </button>
+
+          {sidebarOpen && (
+            <div
+              className="sidebar-overlay"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+        </>
+      )}
+
+
       <div
         className={
-          isAuthPage ? '' : 'layout'
+          isAuthPage
+            ? ''
+            : 'layout'
         }
       >
 
-        {!isAuthPage && <Sidebar />}
+        {!isAuthPage && (
+          <Sidebar
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+          />
+        )}
+
 
         <main
           className={
