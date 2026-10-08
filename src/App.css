@@ -1,0 +1,2733 @@
+/* =========================================================
+   01. GLOBAL RESET
+========================================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--page-bg);
+  color: var(--text-main);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+}
+
+
+/* =========================================================
+   02. THEME VARIABLES
+========================================================= */
+
+:root {
+  --page-bg: #f6f8fc;
+  --card-bg: #ffffff;
+  --soft-bg: #f8fafc;
+
+  --text-main: #172033;
+  --text-primary: #334155;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+
+  --border-color: #e5e7eb;
+  --soft-border: #f1f5f9;
+
+  --input-bg: #ffffff;
+  --input-border: #e2e8f0;
+
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-soft: #eff6ff;
+  --primary-border: #dbeafe;
+
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #dc2626;
+
+  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 5px 18px rgba(15, 23, 42, 0.06);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+
+
+/* =========================================================
+   03. DARK THEME
+========================================================= */
+
+[data-theme="dark"] {
+  --page-bg: #0f172a;
+  --card-bg: #1e293b;
+  --soft-bg: #172033;
+
+  --text-main: #f8fafc;
+  --text-primary: #e2e8f0;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+
+  --border-color: #334155;
+  --soft-border: #334155;
+
+  --input-bg: #0f172a;
+  --input-border: #475569;
+
+  --primary-soft: #172554;
+  --primary-border: #1e3a8a;
+}
+
+
+/* =========================================================
+   04. APP LAYOUT
+========================================================= */
+
+.app {
+  min-height: 100vh;
+  background: var(--page-bg);
+  transition: background 0.25s ease;
+}
+
+.layout {
+  display: flex;
+  min-height: calc(100vh - 70px);
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+  padding: 32px;
+  overflow-y: auto;
+}
+
+
+/* =========================================================
+   05. NAVBAR
+========================================================= */
+
+.navbar {
+  height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 32px;
+
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border-color);
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.navbar-title {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notification {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+.navbar-avatar,
+.user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #dbeafe;
+  color: var(--primary);
+
+  font-weight: 700;
+}
+
+.navbar-avatar {
+  width: 36px;
+  height: 36px;
+  font-size: 13px;
+}
+
+.navbar-user-info strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.navbar-user-info span {
+  display: block;
+  margin-top: 3px;
+
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+
+/* ---------- NAVBAR THEME BUTTON ---------- */
+
+.theme-toggle {
+  padding: 8px 12px;
+
+  border: 1px solid var(--border-color);
+  border-radius: 7px;
+
+  background: var(--card-bg);
+  color: var(--text-secondary);
+
+  font-size: 12px;
+
+  transition: 0.2s ease;
+}
+
+.theme-toggle:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+
+/* =========================================================
+   06. SIDEBAR
+========================================================= */
+
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+
+  padding: 24px 16px;
+
+  display: flex;
+  flex-direction: column;
+
+  background: var(--card-bg);
+  border-right: 1px solid var(--border-color);
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 0 8px;
+  margin-bottom: 32px;
+}
+
+.sidebar-logo {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: #172554;
+  color: #ffffff;
+
+  font-weight: 700;
+}
+
+.sidebar-header h2 {
+  font-size: 18px;
+  color: var(--text-main);
+}
+
+.sidebar-header p {
+  margin-top: 3px;
+
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sidebar-menu a {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  padding: 11px 12px;
+
+  border-radius: var(--radius-sm);
+
+  color: var(--text-secondary);
+  font-size: 13px;
+
+  transition: 0.2s ease;
+}
+
+.sidebar-menu a svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+
+  color: var(--text-muted);
+}
+
+.sidebar-menu a:hover {
+  background: var(--soft-bg);
+  color: var(--text-main);
+}
+
+.sidebar-menu a.active {
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.sidebar-menu a.active svg {
+  color: var(--primary);
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 14px 8px 4px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  border-top: 1px solid var(--soft-border);
+}
+
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  font-size: 13px;
+}
+
+.sidebar-bottom strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.sidebar-bottom span {
+  display: block;
+  margin-top: 3px;
+
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   07. COMMON PAGE STRUCTURE
+========================================================= */
+
+.home-page,
+.profile-page,
+.career-page,
+.skills-page,
+.skill-gap-page,
+.cluster-page,
+.dashboard-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.page-label {
+  color: var(--primary);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 1.4px;
+
+  margin-bottom: 7px;
+}
+
+.page-header h1 {
+  margin-bottom: 7px;
+
+  color: var(--text-main);
+  font-size: 30px;
+}
+
+.page-header > div > p:last-child {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.section-heading {
+  margin-bottom: 16px;
+}
+
+.section-heading h2 {
+  color: var(--text-main);
+  font-size: 21px;
+}
+
+.section-heading > p:last-child {
+  margin-top: 7px;
+
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   08. COMMON CARDS
+========================================================= */
+
+.info-card,
+.home-card,
+.profile-card,
+.career-item,
+.gap-item {
+  background: var(--card-bg);
+
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-card {
+  padding: 24px;
+}
+
+.profile-page .profile-card {
+  margin-bottom: 20px;
+}
+
+.info-card {
+  padding: 20px;
+}
+
+.info-card h3 {
+  margin-bottom: 10px;
+
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.info-card h2 {
+  margin-bottom: 7px;
+
+  color: var(--text-main);
+  font-size: 27px;
+}
+
+.info-card p {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   09. BUTTONS
+========================================================= */
+
+.primary-btn {
+  padding: 10px 17px;
+
+  border: none;
+  border-radius: 7px;
+
+  background: var(--primary);
+  color: #ffffff;
+
+  font-size: 13px;
+
+  transition: 0.2s ease;
+}
+
+.primary-btn:hover {
+  background: var(--primary-hover);
+}
+
+
+/* =========================================================
+   10. HOME PAGE - STATS
+========================================================= */
+
+.stats-grid {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 16px;
+  margin-bottom: 26px;
+}
+
+
+/* =========================================================
+   11. HOME PAGE - MAIN CARDS
+========================================================= */
+
+.home-content-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.home-card {
+  padding: 22px;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+
+  gap: 15px;
+}
+
+.card-label {
+  color: var(--primary);
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 1.2px;
+
+  margin-bottom: 7px;
+}
+
+.home-card h2 {
+  margin-bottom: 10px;
+
+  font-size: 20px;
+  color: var(--text-main);
+}
+
+.card-description {
+  margin-bottom: 18px;
+
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   12. HOME PAGE - CAREER HIGHLIGHT
+========================================================= */
+
+.career-highlight-card {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 30px;
+
+  margin-bottom: 18px;
+  padding: 26px;
+
+  background: var(--card-bg);
+
+  border: 1px solid var(--primary-border);
+  border-radius: 14px;
+
+  box-shadow: var(--shadow-sm);
+}
+
+.career-highlight-content {
+  flex: 1;
+}
+
+.career-highlight-content h2 {
+  margin-bottom: 9px;
+
+  color: var(--text-main);
+  font-size: 27px;
+}
+
+.career-progress-list {
+  max-width: 620px;
+  margin-bottom: 20px;
+}
+
+.career-match-circle {
+  width: 145px;
+  height: 145px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  border: 10px solid #dbeafe;
+
+  background: var(--primary-soft);
+}
+
+.career-match-circle span {
+  margin-bottom: 4px;
+
+  color: var(--text-secondary);
+  font-size: 10px;
+}
+
+.career-match-circle strong {
+  color: var(--primary);
+  font-size: 27px;
+}
+
+.career-match-circle small {
+  margin-top: 3px;
+
+  color: var(--success);
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   13. HOME PAGE - SKILL GAP
+========================================================= */
+
+.skill-gap-highlight-card,
+.skills-highlight-card {
+  padding: 26px;
+
+  background: var(--card-bg);
+
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+
+  box-shadow: var(--shadow-sm);
+}
+
+.gap-count {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #fff7ed;
+  color: #ea580c;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.skill-gap-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
+  margin: 18px 0;
+}
+
+.skill-gap-row,
+.skill-profile-item {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 11px 12px;
+
+  background: var(--soft-bg);
+  border-radius: 8px;
+}
+
+.skill-gap-row strong,
+.skill-profile-item strong {
+  display: block;
+
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.skill-gap-row span,
+.skill-profile-item span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.skill-gap-row span {
+  color: #ea580c;
+}
+
+.skill-gap-row b,
+.skill-profile-item b {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.skill-profile-item b {
+  color: var(--primary);
+}
+
+
+/* =========================================================
+   14. HOME PAGE - SKILLS
+========================================================= */
+
+.skills-profile-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+
+/* =========================================================
+   15. PROGRESS BAR
+========================================================= */
+
+.progress-container {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+
+  margin-bottom: 7px;
+
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 7px;
+
+  overflow: hidden;
+
+  background: #e2e8f0;
+
+  border-radius: 10px;
+}
+
+.progress-fill {
+  height: 100%;
+
+  background: var(--primary);
+
+  border-radius: 10px;
+}
+
+
+/* =========================================================
+   16. PROFILE PAGE
+========================================================= */
+
+.profile-page .profile-card {
+  margin-bottom: 20px;
+}
+
+
+/* ---------- PROFILE FORM ---------- */
+
+.profile-form-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+
+  margin-top: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.form-group label {
+  color: var(--text-primary);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.form-group input {
+  width: 100%;
+
+  padding: 12px 14px;
+
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+
+  background: var(--input-bg);
+  color: var(--text-main);
+
+  font-size: 14px;
+
+  outline: none;
+
+  transition: 0.2s ease;
+}
+
+.form-group input:focus {
+  border-color: var(--primary);
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.form-group input:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+
+/* ---------- PROFILE SKILLS ---------- */
+
+.profile-skills-grid {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 12px;
+
+  margin-top: 24px;
+}
+
+.profile-skill {
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 5px;
+
+  padding: 14px;
+
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+
+  background: var(--soft-bg);
+  color: var(--text-main);
+
+  cursor: pointer;
+
+  text-align: left;
+
+  transition: 0.2s ease;
+}
+
+.profile-skill:hover {
+  border-color: var(--primary);
+
+  transform: translateY(-1px);
+}
+
+.profile-skill span {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.profile-skill small {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.profile-skill.selected {
+  border-color: var(--primary);
+
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+
+/* ---------- PROFILE ADDITIONAL INFORMATION ---------- */
+
+.profile-info-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 16px;
+
+  margin-top: 24px;
+}
+
+.profile-info-grid > div {
+  padding: 16px;
+
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+
+  background: var(--soft-bg);
+}
+
+.profile-info-grid strong {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: var(--text-main);
+  font-size: 13px;
+}
+
+.profile-info-grid p {
+  color: var(--text-secondary);
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   17. CAREER PREDICTION PAGE
+========================================================= */
+
+.career-primary-card {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 30px;
+
+  margin-bottom: 32px;
+  padding: 28px;
+
+  background: var(--card-bg);
+
+  border: 1px solid var(--primary-border);
+  border-radius: 14px;
+
+  box-shadow: var(--shadow-sm);
+}
+
+.career-primary-card h2 {
+  margin-bottom: 10px;
+
+  color: var(--text-main);
+  font-size: 28px;
+}
+
+.career-description {
+  max-width: 650px;
+
+  color: var(--text-secondary);
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.career-score {
+  min-width: 110px;
+
+  padding: 18px;
+
+  text-align: center;
+
+  border-radius: 12px;
+
+  background: var(--primary-soft);
+}
+
+.career-score strong {
+  display: block;
+
+  color: var(--primary);
+  font-size: 30px;
+}
+
+.career-score span {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.career-section {
+  margin-bottom: 30px;
+}
+
+.career-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.career-item {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 20px;
+
+  padding: 18px;
+}
+
+.career-item h3 {
+  margin-bottom: 5px;
+
+  color: var(--text-main);
+  font-size: 15px;
+}
+
+.career-item p {
+  color: var(--text-secondary);
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.career-progress {
+  width: 220px;
+  flex-shrink: 0;
+}
+
+
+/* ---------- CAREER PREDICTION CURRENT ---------- */
+
+.prediction-input-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 16px;
+
+  margin-top: 24px;
+}
+
+.prediction-info {
+  padding: 16px;
+
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+
+  background: var(--soft-bg);
+}
+
+.prediction-info span,
+.prediction-result-content span {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.prediction-info strong {
+  color: var(--text-main);
+  font-size: 20px;
+}
+
+.selected-skills {
+  margin-top: 28px;
+}
+
+.selected-skills h3 {
+  margin-bottom: 14px;
+
+  color: var(--text-main);
+}
+
+.selected-skills-list {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+}
+
+.skill-chip {
+  padding: 7px 11px;
+
+  border: 1px solid var(--primary-border);
+  border-radius: 20px;
+
+  background: var(--primary-soft);
+  color: var(--primary);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.prediction-result {
+  margin-top: 24px;
+}
+
+.prediction-result-content {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 20px;
+
+  margin-top: 24px;
+  padding: 20px;
+
+  border-radius: 12px;
+
+  background: var(--soft-bg);
+
+  border: 1px solid var(--border-color);
+}
+
+.prediction-result-content h3 {
+  color: var(--text-main);
+  font-size: 24px;
+}
+
+.prediction-result-content strong {
+  color: var(--primary);
+  font-size: 28px;
+}
+
+
+/* =========================================================
+   18. SKILL ANALYSIS PAGE
+========================================================= */
+
+.skills-header {
+  align-items: center;
+}
+
+.skill-overview {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 16px;
+
+  margin-bottom: 22px;
+}
+
+.skill-overview-card {
+  padding: 19px 20px;
+
+  background: var(--card-bg);
+
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+}
+
+.skill-overview-card span {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: var(--text-secondary);
+
+  font-size: 12px;
+  font-weight: 600;
+
+  text-transform: uppercase;
+}
+
+.skill-overview-card strong {
+  display: block;
+
+  color: var(--text-main);
+
+  font-size: 25px;
+}
+
+.skill-overview-card small {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.skill-analysis-panel {
+  padding: 24px;
+}
+
+.skill-analysis-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.skill-analysis-item {
+  padding: 19px 0;
+
+  border-bottom: 1px solid var(--soft-border);
+}
+
+.skill-analysis-item:last-child {
+  border-bottom: none;
+}
+
+.skill-analysis-info {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 11px;
+}
+
+/* Current SkillAnalysis.jsx uses this structure */
+
+.skill-analysis-info > div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.skill-analysis-info strong {
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+.skill-analysis-info span {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.skill-analysis-info > b {
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+
+/* Optional older skill-analysis components */
+
+.skill-name-area {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.skill-letter {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: var(--primary-soft);
+  color: var(--primary);
+
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.skill-name-area strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: var(--text-main);
+}
+
+.skill-name-area span {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.skill-score-area {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.skill-score-area b {
+  min-width: 38px;
+
+  color: var(--text-main);
+
+  text-align: right;
+}
+
+.skill-level {
+  padding: 5px 8px;
+
+  border-radius: 6px;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.skill-level.strong {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.skill-level.good {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.skill-level.developing {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+
+/* =========================================================
+   19. SKILL GAP PAGE
+========================================================= */
+
+.skill-gap-summary {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 16px;
+
+  margin-top: 24px;
+}
+
+.gap-stat {
+  padding: 18px;
+
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+
+  background: var(--soft-bg);
+}
+
+.gap-stat span {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.gap-stat strong {
+  color: var(--text-main);
+  font-size: 24px;
+}
+
+.skill-gap-start {
+  margin-top: 20px;
+}
+
+.skill-gap-start h2 {
+  margin-bottom: 8px;
+
+  color: var(--text-main);
+}
+
+.skill-gap-start p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.gap-section {
+  margin-top: 20px;
+}
+
+.gap-skill-list {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+.gap-skill-list .skill-chip {
+  text-transform: capitalize;
+}
+
+.gap-missing {
+  border-color: #fed7aa;
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+[data-theme="dark"] .gap-missing {
+  border-color: #7c2d12;
+  background: #431407;
+  color: #fdba74;
+}
+
+
+/* =========================================================
+   20. CLUSTER PAGE
+========================================================= */
+
+.cluster-skill-summary {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 16px;
+
+  margin-top: 24px;
+}
+
+.cluster-stat {
+  padding: 18px;
+
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+
+  background: var(--soft-bg);
+}
+
+.cluster-stat span {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.cluster-stat strong {
+  color: var(--text-main);
+  font-size: 24px;
+}
+
+.cluster-skills {
+  margin-top: 28px;
+}
+
+.cluster-skills h3 {
+  margin-bottom: 14px;
+
+  color: var(--text-main);
+}
+
+.cluster-result {
+  margin-top: 24px;
+}
+
+.cluster-result-box {
+  display: grid;
+
+  grid-template-columns: 180px 1fr;
+
+  gap: 20px;
+
+  margin-top: 24px;
+  padding: 22px;
+
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+
+  background: var(--soft-bg);
+}
+
+.cluster-result-box span {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.cluster-result-box strong {
+  color: var(--primary);
+  font-size: 28px;
+}
+
+.cluster-result-box h3 {
+  color: var(--text-main);
+  font-size: 24px;
+}
+
+
+/* =========================================================
+   21. DASHBOARD PAGE
+========================================================= */
+
+.dashboard-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 18px;
+
+  margin-bottom: 18px;
+}
+
+.dashboard-careers,
+.dashboard-skills {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-career {
+  padding: 15px 0;
+
+  border-bottom: 1px solid var(--soft-border);
+}
+
+.dashboard-career:last-child {
+  border-bottom: none;
+}
+
+.dashboard-career > div:first-child {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 10px;
+}
+
+.dashboard-career strong {
+  color: var(--text-main);
+}
+
+.dashboard-career span {
+  color: var(--text-secondary);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dashboard-progress {
+  width: 100%;
+  margin-top: 5px;
+}
+
+.dashboard-skill {
+  padding: 15px 0;
+
+  border-bottom: 1px solid var(--soft-border);
+}
+
+.dashboard-skill:last-child {
+  border-bottom: none;
+}
+
+.dashboard-skill > div:first-child {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 10px;
+}
+
+.dashboard-skill strong {
+  color: var(--text-main);
+}
+
+.dashboard-skill span {
+  color: var(--text-secondary);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dashboard-recommendation {
+  display: flex;
+
+  align-items: center;
+
+  gap: 18px;
+
+  margin-top: 24px;
+  padding: 22px 24px;
+
+  border-left: 4px solid var(--primary);
+}
+
+.dashboard-recommendation h2 {
+  margin: 3px 0 5px;
+
+  color: var(--text-main);
+}
+
+.dashboard-recommendation p:last-child {
+  max-width: 700px;
+
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   22. RESPONSIVE - TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .sidebar {
+    width: 200px;
+  }
+
+  .main-content {
+    padding: 24px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .home-content-grid,
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-skills-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .profile-info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+/* =========================================================
+   23. RESPONSIVE - MEDIUM
+========================================================= */
+
+@media (max-width: 800px) {
+
+  .skills-profile-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .skill-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .prediction-input-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* PROFILE */
+  .profile-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-skills-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .profile-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =========================================================
+   24. RESPONSIVE - MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .main-content {
+    padding: 20px 16px;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .page-header h1 {
+    font-size: 26px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-content-grid,
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skill-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .career-highlight-card,
+  .career-primary-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .career-match-circle {
+    align-self: center;
+  }
+
+  .career-score {
+    width: 100%;
+  }
+
+  .career-progress {
+    width: 100%;
+  }
+
+  .career-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .career-item .progress-container {
+    width: 100%;
+  }
+
+  .prediction-result-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .skill-gap-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .cluster-skill-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .cluster-result-box {
+    grid-template-columns: 1fr;
+  }
+
+  .skill-analysis-info {
+    align-items: flex-start;
+  }
+
+  .skill-score-area {
+    gap: 7px;
+  }
+
+  .skill-level {
+    display: none;
+  }
+
+  .dashboard-recommendation {
+    align-items: flex-start;
+  }
+}
+
+
+/* =========================================================
+   25. RESPONSIVE - SMALL MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+  .navbar {
+    height: 60px;
+    padding: 0 15px;
+  }
+
+  .navbar-title {
+    display: none;
+  }
+
+  .navbar-user-info {
+    display: none;
+  }
+
+  .notification {
+    width: 32px;
+    height: 32px;
+  }
+
+  .layout {
+    min-height: calc(100vh - 60px);
+  }
+
+  .sidebar {
+    width: 170px;
+    padding: 20px 10px;
+  }
+
+  .sidebar-header {
+    padding: 0 8px;
+  }
+
+  .sidebar-header h2 {
+    font-size: 17px;
+  }
+
+  .sidebar-header p {
+    display: block;
+    font-size: 10px;
+  }
+
+  .sidebar-menu a {
+    padding: 10px 9px;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+  }
+
+  .main-content {
+    padding: 18px 14px;
+  }
+
+  /* PROFILE */
+
+  .profile-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-skills-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .profile-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-card {
+    padding: 20px;
+  }
+
+  .theme-toggle {
+    padding: 7px 9px;
+    font-size: 11px;
+  }
+}
+
+
+/* =========================================================
+   26. VERY SMALL SCREENS
+========================================================= */
+
+@media (max-width: 500px) {
+
+  .main-content {
+    padding: 16px 12px;
+  }
+
+  .sidebar {
+    width: 150px;
+  }
+
+  .sidebar-header h2 {
+    font-size: 15px;
+  }
+
+  .sidebar-menu a {
+    font-size: 11px;
+  }
+
+  /* PROFILE */
+
+  .profile-skills-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-career,
+  .dashboard-skill {
+    display: flex;
+
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-progress {
+    width: 100%;
+  }
+}
+
+
+/* =========================
+   AUTH PAGE
+   ========================= */
+
+.auth-page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  box-sizing: border-box;
+  background: var(--background);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 40px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--card-background);
+  box-shadow: var(--shadow);
+  box-sizing: border-box;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.auth-logo {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: var(--primary);
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.auth-header .page-label {
+  margin-bottom: 8px;
+}
+
+.auth-header h1 {
+  margin: 0 0 10px;
+  font-size: 30px;
+}
+
+.auth-header p:last-child {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+
+/* Form */
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.auth-field label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.auth-field input,
+.auth-field select {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  background: var(--input-background);
+  color: var(--text);
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: 0.2s ease;
+}
+
+.auth-field input:focus,
+.auth-field select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.auth-field input::placeholder {
+  color: var(--text-secondary);
+}
+
+
+/* Messages */
+
+.auth-message {
+  padding: 11px 13px;
+  margin-bottom: 18px;
+  border-radius: 9px;
+  font-size: 14px;
+}
+
+.auth-error {
+  border: 1px solid #ef4444;
+  color: #dc2626;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.auth-success {
+  border: 1px solid #22c55e;
+  color: #16a34a;
+  background: rgba(34, 197, 94, 0.08);
+}
+
+
+/* Links */
+
+.auth-link-button {
+  display: block;
+  margin: 18px auto 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-link-button:hover {
+  text-decoration: underline;
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+  .auth-page {
+    padding: 20px 14px;
+  }
+
+  .auth-card {
+    padding: 28px 22px;
+    border-radius: 16px;
+  }
+
+  .auth-header h1 {
+    font-size: 25px;
+  }
+
+  .auth-logo {
+    width: 52px;
+    height: 52px;
+  }
+
+}
+
+
+```css
+/* =========================================
+   AUTH MODAL
+========================================= */
+
+.auth-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+  box-sizing: border-box;
+
+  background: rgba(15, 23, 42, 0.48);
+}
+
+.auth-modal {
+  position: relative;
+
+  width: 100%;
+  max-width: 470px;
+
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+
+  padding: 36px;
+
+  box-sizing: border-box;
+
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+}
+
+.auth-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+
+  background: var(--soft-bg);
+  color: var(--text-secondary);
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.auth-modal-close:hover {
+  background: var(--border-color);
+  color: var(--text-main);
+}
+
+.auth-modal-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.auth-modal-header .auth-logo {
+  margin: 0 auto 10px;
+}
+
+.auth-modal-header .page-label {
+  margin-bottom: 6px;
+}
+
+.auth-modal-header h2 {
+  margin: 0 0 8px;
+
+  font-size: 25px;
+  font-weight: 700;
+
+  color: var(--text-main);
+}
+
+.auth-modal-header p:last-child {
+  margin: 0;
+
+  font-size: 14px;
+  line-height: 1.5;
+
+  color: var(--text-secondary);
+}
+
+
+/* =========================================
+   AUTH INPUTS
+========================================= */
+
+.auth-input-wrapper {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+}
+
+.auth-input-wrapper > svg {
+  position: absolute;
+  left: 13px;
+
+  color: var(--text-muted);
+
+  pointer-events: none;
+}
+
+.auth-input-wrapper input {
+  width: 100%;
+
+  padding: 11px 42px 11px 42px;
+
+  box-sizing: border-box;
+
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+
+  background: var(--input-bg);
+  color: var(--text-main);
+
+  outline: none;
+
+  font-size: 14px;
+
+  transition: 0.2s ease;
+}
+
+.auth-input-wrapper input::placeholder {
+  color: var(--text-muted);
+}
+
+.auth-input-wrapper input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+
+/* =========================================
+   PASSWORD TOGGLE
+========================================= */
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: var(--text-muted);
+
+  cursor: pointer;
+}
+
+.password-toggle:hover {
+  color: var(--text-main);
+}
+
+
+/* =========================================
+   AUTH SWITCH
+========================================= */
+
+.auth-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  margin-top: 18px;
+
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+
+/* =========================================
+   NAVBAR AUTH BUTTONS
+========================================= */
+
+.navbar-auth-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  padding: 8px 13px;
+
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+
+  background: var(--card-bg);
+  color: var(--text-main);
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.navbar-auth-button:hover {
+  background: var(--soft-bg);
+  border-color: var(--input-border);
+}
+
+.navbar-signup-button {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
+
+.navbar-signup-button:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #ffffff;
+}
+
+
+/* =========================================
+   THEME TOGGLE
+========================================= */
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  padding: 0;
+
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+
+  background: var(--soft-bg);
+  color: var(--text-secondary);
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--border-color);
+  color: var(--text-main);
+}
+
+
+/* =========================================
+   NOTIFICATION
+========================================= */
+
+.notification {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  padding: 0;
+
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+
+  background: var(--soft-bg);
+  color: var(--text-secondary);
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.notification:hover {
+  background: var(--border-color);
+  color: var(--text-main);
+}
+
+
+/* =========================================
+   LOGOUT BUTTON
+========================================= */
+
+.logout-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+
+/* =========================================
+   AUTH REQUIRED
+========================================= */
+
+.auth-required-page {
+  min-height: calc(100vh - 70px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+.auth-required-card {
+  width: 100%;
+  max-width: 480px;
+
+  padding: 40px;
+
+  text-align: center;
+
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+
+  box-shadow: var(--shadow-md);
+}
+
+.auth-required-card h1 {
+  margin: 0 0 10px;
+
+  color: var(--text-main);
+}
+
+.auth-required-card p {
+  margin: 0 0 22px;
+
+  color: var(--text-secondary);
+}
+
+
+/* =========================================
+   DARK MODE — NEUTRAL GRAY
+========================================= */
+
+[data-theme='dark'] {
+  --page-bg: #18181b;
+  --card-bg: #27272a;
+  --soft-bg: #222225;
+
+  --text-main: #f4f4f5;
+  --text-primary: #e4e4e7;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+
+  --border-color: #3f3f46;
+  --soft-border: #333338;
+
+  --input-bg: #18181b;
+  --input-border: #52525b;
+
+  --primary: #2563eb;
+  --primary-soft: #1e293b;
+  --primary-border: #334155;
+}
+
+
+/* =========================================
+   MOBILE AUTH MODAL
+========================================= */
+
+@media (max-width: 600px) {
+
+  .auth-modal-overlay {
+    padding: 12px;
+  }
+
+  .auth-modal {
+    max-height: calc(100vh - 24px);
+
+    padding: 28px 22px;
+
+    border-radius: 14px;
+  }
+
+  .auth-modal-header h2 {
+    font-size: 22px;
+  }
+
+  .auth-modal-header p:last-child {
+    font-size: 13px;
+  }
+
+  .navbar-auth-button {
+    padding: 8px 10px;
+  }
+
+  .navbar-user-info {
+    display: none;
+  }
+
+}
+
+
+@media (max-width: 480px) {
+
+  .navbar-auth-button {
+    font-size: 0;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+  }
+
+  .navbar-auth-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .auth-switch {
+    flex-wrap: wrap;
+  }
+
+}
+
+
+
+/* =========================================
+   AUTH MODAL POSITION FIX
+========================================= */
+
+.auth-modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+
+  width: 100vw !important;
+  height: 100vh !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 20px !important;
+  box-sizing: border-box !important;
+
+  z-index: 99999 !important;
+
+  background: rgba(0, 0, 0, 0.45) !important;
+}
+
+.auth-modal {
+  position: relative !important;
+
+  width: 100% !important;
+  max-width: 470px !important;
+
+  margin: 0 !important;
+
+  transform: none !important;
+
+  background: var(--card-bg) !important;
+}
+
+
+
+/* =========================================
+   CHROME-STYLE THEME TOGGLE
+========================================= */
+
+.theme-switch {
+  position: relative;
+  width: 52px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-switch-track {
+  position: relative;
+  width: 52px;
+  height: 30px;
+  padding: 3px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+
+  background: #f3f4f6;
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.theme-switch-thumb {
+  width: 24px;
+  height: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+  color: #4b5563;
+
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.08);
+
+  transform: translateX(0);
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+/* Dark / Active */
+
+.theme-switch.active .theme-switch-track {
+  background: #475569;
+  border-color: #64748b;
+
+  box-shadow:
+    0 0 0 3px rgba(100, 116, 139, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.theme-switch.active .theme-switch-thumb {
+  transform: translateX(22px);
+
+  background: #1f2937;
+  color: #f8fafc;
+
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+
+/* Hover */
+
+.theme-switch:hover .theme-switch-track {
+  border-color: #9ca3af;
+
+  box-shadow:
+    0 0 0 3px rgba(100, 116, 139, 0.08);
+}
+
+.theme-switch.active:hover .theme-switch-track {
+  border-color: #94a3b8;
+
+  box-shadow:
+    0 0 0 3px rgba(148, 163, 184, 0.14),
+    0 2px 8px rgba(0, 0, 0, 0.16);
+}
+
+
+/* Click effect */
+
+.theme-switch:active .theme-switch-thumb {
+  transform: scale(0.92);
+}
+
+.theme-switch.active:active .theme-switch-thumb {
+  transform: translateX(22px) scale(0.92);
+}
+
+
+/* Keyboard accessibility */
+
+.theme-switch:focus-visible {
+  outline: 2px solid #94a3b8;
+  outline-offset: 3px;
+}
+
+
+/* Dark theme version */
+
+[data-theme='dark'] .theme-switch-track {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+[data-theme='dark'] .theme-switch-thumb {
+  background: #ffffff;
+  color: #374151;
+}
+
+[data-theme='dark'] .theme-switch.active .theme-switch-track {
+  background: #475569;
+  border-color: #64748b;
+}
+
+[data-theme='dark'] .theme-switch.active .theme-switch-thumb {
+  background: #1f2937;
+  color: #f8fafc;
+}
+
+
+
+
+/* =========================================
+   AUTH MODAL - FINAL RESPONSIVE WIDTH
+========================================= */
+
+.auth-modal-overlay .auth-modal {
+  width: 520px !important;
+  max-width: calc(100vw - 40px) !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
+
+/* Tablet */
+@media (max-width: 600px) {
+  .auth-modal-overlay .auth-modal {
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+}
+
+
+/* Small mobile */
+@media (max-width: 380px) {
+  .auth-modal-overlay .auth-modal {
+    width: calc(100vw - 16px) !important;
+    max-width: calc(100vw - 16px) !important;
+  }
+}
+
