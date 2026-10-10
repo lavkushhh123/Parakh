@@ -30,8 +30,17 @@ function CareerPrediction() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // Get selected skills
+  const selectedSkills = SKILLS.filter(
+    (skill) => student?.skills?.[skill.key] === 1
+  )
+
   // Send student skills and experience to backend
   const handlePredict = async () => {
+    if (selectedSkills.length === 0) {
+      setError('Please select at least one skill in your profile before predicting a career.')
+      return
+    }
 
     // Data required by prediction API
     const requestData = {
@@ -132,18 +141,18 @@ function CareerPrediction() {
 
           <div className="selected-skills-list">
 
-            {SKILLS
-              .filter(
-                (skill) => student.skills[skill.key] === 1
-              )
-              .map((skill) => (
+            {selectedSkills.length > 0 ? (
+              selectedSkills.map((skill) => (
                 <span
                   className="skill-chip"
                   key={skill.key}
                 >
                   {skill.name}
                 </span>
-              ))}
+              ))
+            ) : (
+              <p>No skills selected yet. Please update your profile to select skills.</p>
+            )}
 
           </div>
         </div>

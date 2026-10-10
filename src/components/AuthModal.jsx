@@ -247,13 +247,31 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
           degree: formData.degree.trim(),
         }
 
+        const emptySkills = Object.keys(studentData.skills).reduce((acc, key) => {
+          acc[key] = 0
+          return acc
+        }, {})
+
         const profileData = {
           ...studentData,
           name: userInfo.name || formData.name.trim(),
           email: userInfo.email || formData.email.trim().toLowerCase(),
           education: userInfo.education || formData.education.trim(),
           degree: userInfo.degree || formData.degree.trim(),
+          experience_years: 0,
+          projects: 0,
+          certifications: [],
+          skills: emptySkills,
+          interests: [],
+          soft_skills: [],
         }
+
+        // Clear previous session data so every signup starts fresh
+        localStorage.removeItem('careerPrediction')
+        localStorage.removeItem('careerCluster')
+        localStorage.removeItem('clusterResult')
+        localStorage.removeItem('skillGapResult')
+        localStorage.removeItem('careerRecommendations')
 
         localStorage.setItem('token', response.token)
         localStorage.setItem('isLoggedIn', 'true')

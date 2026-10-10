@@ -2,7 +2,6 @@
 import {
   Moon,
   Sun,
-  Bell,
   LogIn,
   UserPlus,
   LogOut,
@@ -47,6 +46,7 @@ function Navbar({
     localStorage.removeItem('careerPrediction')
     localStorage.removeItem('skillGapResult')
     localStorage.removeItem('clusterResult')
+    localStorage.removeItem('careerRecommendations')
     navigate('/')
     window.location.reload()
   }
@@ -76,13 +76,6 @@ function Navbar({
           ) : (
             <Sun size={18} />
           )}
-        </button>
-
-        <button
-          className="notification"
-          title="Notifications"
-        >
-          <Bell size={18} />
         </button>
 
         {!isLoggedIn ? (

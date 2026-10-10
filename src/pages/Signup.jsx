@@ -102,13 +102,31 @@ function Signup() {
           degree: requestData.degree,
         }
 
+        const emptySkills = Object.keys(studentData.skills).reduce((acc, key) => {
+          acc[key] = 0
+          return acc
+        }, {})
+
         const profileData = {
           ...studentData,
           name: userInfo.name || requestData.name,
           email: userInfo.email || requestData.email,
           education: userInfo.education || requestData.education,
           degree: userInfo.degree || requestData.degree,
+          experience_years: 0,
+          projects: 0,
+          certifications: [],
+          skills: emptySkills,
+          interests: [],
+          soft_skills: [],
         }
+
+        // Clear previous session data so every signup starts fresh
+        localStorage.removeItem('careerPrediction')
+        localStorage.removeItem('careerCluster')
+        localStorage.removeItem('clusterResult')
+        localStorage.removeItem('skillGapResult')
+        localStorage.removeItem('careerRecommendations')
 
         localStorage.setItem('token', response.token)
         localStorage.setItem('isLoggedIn', 'true')

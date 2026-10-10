@@ -454,7 +454,9 @@ function Profile() {
             </strong>
 
             <p>
-              {profile.interests.join(', ')}
+              {profile.interests && profile.interests.length > 0
+                ? profile.interests.join(', ')
+                : 'No interests added'}
             </p>
 
           </div>
@@ -467,7 +469,7 @@ function Profile() {
             </strong>
 
             <p>
-              {profile.certifications.length > 0
+              {profile.certifications && profile.certifications.length > 0
                 ? profile.certifications.join(', ')
                 : 'No certifications added'}
             </p>
@@ -482,7 +484,9 @@ function Profile() {
             </strong>
 
             <p>
-              {profile.soft_skills.join(', ')}
+              {profile.soft_skills && profile.soft_skills.length > 0
+                ? profile.soft_skills.join(', ')
+                : 'No soft skills added'}
             </p>
 
           </div>
