@@ -170,27 +170,16 @@ function Login() {
 
         </form>
 
-        {/* Forgot password */}
+        {/* Signup link */}
         <button
           type="button"
           className="auth-link-button"
           onClick={() => {
-            navigate('/forgot-password')
+            navigate('/signup')
           }}
         >
-          Forgot Password?
+          Don't have an account? Sign Up
         </button>
-
-        {/* Signup link */}
-            <button
-            type="button"
-            className="auth-link-button"
-            onClick={() => {
-                navigate('/signup')
-            }}
-            >
-            Don't have an account? Sign Up
-            </button>
 
       </div>
 

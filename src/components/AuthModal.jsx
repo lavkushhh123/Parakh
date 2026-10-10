@@ -10,7 +10,6 @@ import {
   Eye,
   EyeOff,
   X,
-  ArrowLeft,
 } from 'lucide-react'
 
 import Button from './Button'
@@ -473,6 +472,23 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
           <p>{getSubtitle()}</p>
         </div>
 
+        <div className="auth-modal-tabs">
+          <button
+            type="button"
+            className={`auth-modal-tab ${authStep === 'login' ? 'active' : ''}`}
+            onClick={() => switchAuthMode('login')}
+          >
+            Login
+          </button>
+          <button
+            type="button"
+            className={`auth-modal-tab ${authStep === 'signup' ? 'active' : ''}`}
+            onClick={() => switchAuthMode('signup')}
+          >
+            Create Account
+          </button>
+        </div>
+
         {error && (
           <div className="auth-message auth-error">
             {error}
@@ -732,70 +748,56 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
             </>
           )}
 
-          <Button
-            type="submit"
-            disabled={loading}
-          >
-            {loading
-              ? 'Please wait...'
-              : authStep === 'login'
-                ? 'Login'
-                : authStep === 'signup'
-                  ? 'Create Account'
-                  : authStep === 'forgot-password'
-                    ? 'Send OTP'
-                    : 'Reset Password'}
-          </Button>
+          {authStep === 'signup' ? (
+            <div className="auth-buttons-row">
+              <Button
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? 'Please wait...' : 'Create Account'}
+              </Button>
+
+              <button
+                type="button"
+                className="auth-secondary-btn"
+                onClick={() => switchAuthMode('login')}
+              >
+                Login
+              </button>
+            </div>
+          ) : (
+            <Button
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? 'Please wait...' : 'Login'}
+            </Button>
+          )}
         </form>
 
-        {authStep === 'login' && (
+        <div className="auth-switch">
+          <span>
+            {authStep === 'login'
+              ? "Don't have an account?"
+              : 'Already have an account?'}
+          </span>
+
           <button
             type="button"
             className="auth-link-button"
-            onClick={goToForgotPassword}
+            onClick={() =>
+              switchAuthMode(
+                authStep === 'login'
+                  ? 'signup'
+                  : 'login'
+              )
+            }
           >
-            Forgot Password?
+            {authStep === 'login'
+              ? 'Sign Up'
+              : 'Login'}
           </button>
-        )}
-
-        {(authStep === 'forgot-password' ||
-          authStep === 'reset-password') && (
-          <button
-            type="button"
-            className="auth-back-button"
-            onClick={goBackToLogin}
-          >
-            <ArrowLeft size={15} />
-            Back to Login
-          </button>
-        )}
-
-        {(authStep === 'login' ||
-          authStep === 'signup') && (
-          <div className="auth-switch">
-            <span>
-              {authStep === 'login'
-                ? "Don't have an account?"
-                : 'Already have an account?'}
-            </span>
-
-            <button
-              type="button"
-              className="auth-link-button"
-              onClick={() =>
-                switchAuthMode(
-                  authStep === 'login'
-                    ? 'signup'
-                    : 'login'
-                )
-              }
-            >
-              {authStep === 'login'
-                ? 'Sign Up'
-                : 'Login'}
-            </button>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   )

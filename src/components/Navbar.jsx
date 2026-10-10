@@ -110,9 +110,10 @@ function Navbar({
             <button
               className="logout-button"
               onClick={handleLogout}
+              title="Logout"
             >
-              <LogOut size={17} />
-              Logout
+              <LogOut size={16} />
+              <span>Logout</span>
             </button>
           </>
         )}

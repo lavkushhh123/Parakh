@@ -294,10 +294,20 @@ function Signup() {
 
           </div>
 
-          {/* Signup button */}
-          <Button type="submit" disabled={loading}>
-            {loading ? 'Creating account...' : 'Create Account'}
-          </Button>
+          {/* Action buttons: Create Account with Login option beside it */}
+          <div className="auth-buttons-row">
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Creating account...' : 'Create Account'}
+            </Button>
+
+            <button
+              type="button"
+              className="auth-secondary-btn"
+              onClick={() => navigate('/login')}
+            >
+              Login
+            </button>
+          </div>
 
         </form>
 
