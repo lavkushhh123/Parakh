@@ -10,7 +10,17 @@ import {
   X,
   ArrowLeft,
 } from 'lucide-react'
+
 import Button from './Button'
+
+import {
+  signupUser,
+  verifySignupOtp,
+  resendSignupOtp,
+  loginUser,
+  forgotPassword,
+  resetPassword,
+} from '../services/api'
 
 function AuthModal({ mode = 'login', onClose, onModeChange }) {
   const [authStep, setAuthStep] = useState(
@@ -29,6 +39,7 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
 
   const [showPassword, setShowPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
+
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
@@ -92,6 +103,10 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
       return 'Name is required.'
     }
 
+    if (!formData.password) {
+      return 'Password is required.'
+    }
+
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/
 
     if (!passwordRegex.test(formData.password)) {
@@ -124,6 +139,10 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
   }
 
   const validateNewPassword = () => {
+    if (!/^\d{6}$/.test(formData.otp)) {
+      return 'OTP must be a 6 digit number.'
+    }
+
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/
 
     if (!passwordRegex.test(formData.newPassword)) {
@@ -133,6 +152,7 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
     return ''
   }
 
+  // LOGIN
   const handleLogin = async () => {
     const validationError = validateLogin()
 
@@ -146,15 +166,23 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
       setError('')
       setSuccess('')
 
+      const response = await loginUser({
+        email: formData.email.trim(),
+        password: formData.password,
+      })
+
+      if (response.token) {
+        localStorage.setItem('token', response.token)
+      }
+
       localStorage.setItem('isLoggedIn', 'true')
 
-      localStorage.setItem(
-        'user',
-        JSON.stringify({
-          name: formData.name || 'Student',
-          email: formData.email.trim(),
-        })
-      )
+      if (response.user) {
+        localStorage.setItem(
+          'user',
+          JSON.stringify(response.user)
+        )
+      }
 
       onClose()
       window.location.href = '/'
@@ -165,6 +193,7 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
     }
   }
 
+  // SIGNUP
   const handleSignup = async () => {
     const validationError = validateSignup()
 
@@ -178,20 +207,20 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
       setError('')
       setSuccess('')
 
-      localStorage.setItem('isLoggedIn', 'true')
+      const response = await signupUser({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        password: formData.password,
+        education: formData.education.trim(),
+        degree: formData.degree.trim(),
+      })
 
-      localStorage.setItem(
-        'user',
-        JSON.stringify({
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          education: formData.education.trim(),
-          degree: formData.degree.trim(),
-        })
+      setAuthStep('verify-otp')
+
+      setSuccess(
+        response.message ||
+          'Account created. OTP sent to your email.'
       )
-
-      onClose()
-      window.location.href = '/'
     } catch (error) {
       setError(error.message || 'Signup failed.')
     } finally {
@@ -199,31 +228,7 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
     }
   }
 
-  const handleSendOtp = async () => {
-    const validationError = validateEmail()
-
-    if (validationError) {
-      setError(validationError)
-      return
-    }
-
-    try {
-      setLoading(true)
-      setError('')
-      setSuccess('')
-
-      setAuthStep('verify-otp')
-
-      setSuccess(
-        'OTP sent successfully. Enter the OTP to continue.'
-      )
-    } catch (error) {
-      setError(error.message || 'Unable to send OTP.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
+  // VERIFY SIGNUP OTP
   const handleVerifyOtp = async () => {
     const validationError = validateOtp()
 
@@ -237,18 +242,102 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
       setError('')
       setSuccess('')
 
-      setAuthStep('reset-password')
+      const response = await verifySignupOtp({
+        email: formData.email.trim(),
+        otp: formData.otp,
+      })
+
+      if (response.token) {
+        localStorage.setItem('token', response.token)
+      }
+
+      localStorage.setItem('isLoggedIn', 'true')
+
+      localStorage.setItem(
+        'user',
+        JSON.stringify({
+          id: response.user?.id || '',
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+        })
+      )
 
       setSuccess(
-        'OTP verified successfully. Create your new password.'
+        response.message ||
+          'Email verified successfully.'
       )
+
+      setTimeout(() => {
+        onClose()
+        window.location.href = '/'
+      }, 700)
     } catch (error) {
-      setError(error.message || 'OTP verification failed.')
+      setError(
+        error.message || 'OTP verification failed.'
+      )
     } finally {
       setLoading(false)
     }
   }
 
+  // RESEND SIGNUP OTP
+  const handleResendOtp = async () => {
+    try {
+      setLoading(true)
+      setError('')
+      setSuccess('')
+
+      const response = await resendSignupOtp({
+        email: formData.email.trim(),
+      })
+
+      setSuccess(
+        response.message ||
+          'New OTP sent successfully.'
+      )
+    } catch (error) {
+      setError(
+        error.message || 'Unable to resend OTP.'
+      )
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // FORGOT PASSWORD - SEND OTP
+  const handleSendOtp = async () => {
+    const validationError = validateEmail()
+
+    if (validationError) {
+      setError(validationError)
+      return
+    }
+
+    try {
+      setLoading(true)
+      setError('')
+      setSuccess('')
+
+      const response = await forgotPassword({
+        email: formData.email.trim(),
+      })
+
+      setAuthStep('reset-password')
+
+      setSuccess(
+        response.message ||
+          'OTP sent successfully. Check your email.'
+      )
+    } catch (error) {
+      setError(
+        error.message || 'Unable to send OTP.'
+      )
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // RESET PASSWORD
   const handleResetPassword = async () => {
     const validationError = validateNewPassword()
 
@@ -262,10 +351,17 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
       setError('')
       setSuccess('')
 
+      const response = await resetPassword({
+        email: formData.email.trim(),
+        otp: formData.otp,
+        newPassword: formData.newPassword,
+      })
+
       setAuthStep('login')
 
       setSuccess(
-        'Password reset successfully. You can login now.'
+        response.message ||
+          'Password reset successfully. You can login now.'
       )
 
       setFormData((prev) => ({
@@ -275,7 +371,9 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
         otp: '',
       }))
     } catch (error) {
-      setError(error.message || 'Password reset failed.')
+      setError(
+        error.message || 'Password reset failed.'
+      )
     } finally {
       setLoading(false)
     }
@@ -313,6 +411,11 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
     setAuthStep('forgot-password')
     setError('')
     setSuccess('')
+    setFormData((prev) => ({
+      ...prev,
+      otp: '',
+      newPassword: '',
+    }))
   }
 
   const goBackToLogin = () => {
@@ -331,14 +434,19 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
     switch (authStep) {
       case 'login':
         return 'Welcome Back'
+
       case 'signup':
         return 'Create Account'
+
       case 'forgot-password':
         return 'Forgot Password'
+
       case 'verify-otp':
         return 'Verify OTP'
+
       case 'reset-password':
         return 'Reset Password'
+
       default:
         return 'Welcome Back'
     }
@@ -348,14 +456,19 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
     switch (authStep) {
       case 'login':
         return 'Login to continue your career intelligence journey.'
+
       case 'signup':
         return 'Create your account to start your career intelligence journey.'
+
       case 'forgot-password':
         return 'Enter your registered email to receive an OTP.'
+
       case 'verify-otp':
         return 'Enter the 6 digit OTP sent to your email.'
+
       case 'reset-password':
-        return 'Create a new password for your account.'
+        return 'Enter the OTP and create a new password.'
+
       default:
         return ''
     }
@@ -412,7 +525,9 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
         <form onSubmit={handleSubmit}>
           {authStep === 'signup' && (
             <div className="auth-field">
-              <label htmlFor="auth-name">Name</label>
+              <label htmlFor="auth-name">
+                Name
+              </label>
 
               <div className="auth-input-wrapper">
                 <User size={18} />
@@ -430,7 +545,9 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
           )}
 
           <div className="auth-field">
-            <label htmlFor="auth-email">Email</label>
+            <label htmlFor="auth-email">
+              Email
+            </label>
 
             <div className="auth-input-wrapper">
               <Mail size={18} />
@@ -460,7 +577,9 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
                   id="auth-password"
                   name="password"
                   type={
-                    showPassword ? 'text' : 'password'
+                    showPassword
+                      ? 'text'
+                      : 'password'
                   }
                   value={formData.password}
                   onChange={handleChange}
@@ -539,7 +658,9 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
 
           {authStep === 'verify-otp' && (
             <div className="auth-field">
-              <label htmlFor="auth-otp">OTP</label>
+              <label htmlFor="auth-otp">
+                OTP
+              </label>
 
               <div className="auth-input-wrapper">
                 <Lock size={18} />
@@ -558,50 +679,77 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
             </div>
           )}
 
+          {authStep === 'forgot-password' && (
+            <></>
+          )}
+
           {authStep === 'reset-password' && (
-            <div className="auth-field">
-              <label htmlFor="auth-new-password">
-                New Password
-              </label>
+            <>
+              <div className="auth-field">
+                <label htmlFor="auth-otp">
+                  OTP
+                </label>
 
-              <div className="auth-input-wrapper">
-                <Lock size={18} />
+                <div className="auth-input-wrapper">
+                  <Lock size={18} />
 
-                <input
-                  id="auth-new-password"
-                  name="newPassword"
-                  type={
-                    showNewPassword
-                      ? 'text'
-                      : 'password'
-                  }
-                  value={formData.newPassword}
-                  onChange={handleChange}
-                  placeholder="8-20 characters with letters and numbers"
-                />
-
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() =>
-                    setShowNewPassword(
-                      (prev) => !prev
-                    )
-                  }
-                  aria-label={
-                    showNewPassword
-                      ? 'Hide password'
-                      : 'Show password'
-                  }
-                >
-                  {showNewPassword ? (
-                    <EyeOff size={18} />
-                  ) : (
-                    <Eye size={18} />
-                  )}
-                </button>
+                  <input
+                    id="auth-otp"
+                    name="otp"
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={formData.otp}
+                    onChange={handleChange}
+                    placeholder="Enter 6 digit OTP"
+                  />
+                </div>
               </div>
-            </div>
+
+              <div className="auth-field">
+                <label htmlFor="auth-new-password">
+                  New Password
+                </label>
+
+                <div className="auth-input-wrapper">
+                  <Lock size={18} />
+
+                  <input
+                    id="auth-new-password"
+                    name="newPassword"
+                    type={
+                      showNewPassword
+                        ? 'text'
+                        : 'password'
+                    }
+                    value={formData.newPassword}
+                    onChange={handleChange}
+                    placeholder="8-20 characters with letters and numbers"
+                  />
+
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() =>
+                      setShowNewPassword(
+                        (prev) => !prev
+                      )
+                    }
+                    aria-label={
+                      showNewPassword
+                        ? 'Hide password'
+                        : 'Show password'
+                    }
+                  >
+                    {showNewPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
+                </div>
+              </div>
+            </>
           )}
 
           <Button
@@ -636,7 +784,7 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
           <button
             type="button"
             className="auth-link-button"
-            onClick={handleSendOtp}
+            onClick={handleResendOtp}
             disabled={loading}
           >
             Resend OTP
