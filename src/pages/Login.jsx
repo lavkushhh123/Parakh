@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import Button from '../components/Button'
 import { loginUser } from '../services/api'
+import studentData from '../data/studentData'
 
 function Login() {
 
@@ -67,6 +68,20 @@ function Login() {
 
       if (response.user) {
         localStorage.setItem('user', JSON.stringify(response.user))
+
+        const existingProfile = localStorage.getItem('studentProfile')
+        const base = existingProfile ? JSON.parse(existingProfile) : studentData
+
+        localStorage.setItem(
+          'studentProfile',
+          JSON.stringify({
+            ...base,
+            name: response.user.name || base.name,
+            email: response.user.email || base.email,
+            education: response.user.education || base.education,
+            degree: response.user.degree || base.degree,
+          })
+        )
       }
 
       localStorage.setItem('isLoggedIn', 'true')

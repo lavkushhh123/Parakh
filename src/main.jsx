@@ -11,7 +11,7 @@ createRoot(document.getElementById('root')).render(
       <App />
       <ToastContainer
         position="top-right"
-        autoClose={4000}
+        autoClose={1800}
         newestOnTop
       />
     </>

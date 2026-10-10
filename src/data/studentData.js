@@ -1,7 +1,7 @@
 const studentData = {
   student_id: 'STU001',
 
-  name: 'Lavkush Nishad',
+  name: 'Student',
 
   education: 'B.Tech',
 

@@ -11,8 +11,25 @@ function Home() {
 
   // Saved profile load karo
   const [student] = useState(() => {
-    const savedProfile = localStorage.getItem('studentProfile')
-    return savedProfile ? JSON.parse(savedProfile) : studentData
+    let userObj = null
+    let profileObj = null
+    try {
+      const savedUser = localStorage.getItem('user')
+      if (savedUser) userObj = JSON.parse(savedUser)
+    } catch {}
+    try {
+      const savedProfile = localStorage.getItem('studentProfile')
+      if (savedProfile) profileObj = JSON.parse(savedProfile)
+    } catch {}
+
+    const base = profileObj || studentData
+    return {
+      ...base,
+      name: userObj?.name || profileObj?.name || base.name || 'Student',
+      email: userObj?.email || profileObj?.email || base.email,
+      education: userObj?.education || profileObj?.education || base.education,
+      degree: userObj?.degree || profileObj?.degree || base.degree,
+    }
   })
 
   // Saved career prediction load karo
@@ -33,17 +50,6 @@ function Home() {
     return savedGap ? JSON.parse(savedGap) : null
   })
 
-  // Saved career recommendations load karo
-  const [recommendations] = useState(() => {
-    const savedRecommendations = localStorage.getItem(
-      'careerRecommendations'
-    )
-
-    return savedRecommendations
-      ? JSON.parse(savedRecommendations)
-      : null
-  })
-
   // Selected skills
   const selectedSkills = SKILLS.filter(
     (skill) => student.skills[skill.key] === 1
@@ -53,21 +59,6 @@ function Home() {
   const skillPercentage = Math.round(
     (selectedSkills.length / SKILLS.length) * 100
   )
-
-  // Careers for recommendation section
-  const careers = recommendations?.recommendations?.length
-    ? recommendations.recommendations.map((item) => ({
-        name: item.career,
-        score: Math.round(item.score * 100),
-      }))
-    : prediction
-      ? [
-          {
-            name: prediction.career,
-            score: Math.round(prediction.confidence * 100),
-          },
-        ]
-      : []
 
   return (
     <div className="home-page">
@@ -340,70 +331,6 @@ function Home() {
           label="Overall Skill Progress"
           value={skillPercentage}
         />
-
-      </section>
-
-
-      {/* =========================
-          CAREER RECOMMENDATIONS
-      ========================= */}
-
-      <section className="skills-highlight-card">
-
-        <div className="section-heading">
-
-          <p className="page-label">
-            CAREER RECOMMENDATIONS
-          </p>
-
-          <h2>Suggested Career Paths</h2>
-
-        </div>
-
-
-        {careers.length > 0 ? (
-          <div className="skills-profile-grid">
-
-            {careers
-              .slice(0, 3)
-              .map((career) => (
-                <div
-                  className="skill-profile-item"
-                  key={career.name}
-                >
-
-                  <div>
-                    <strong>
-                      {career.name}
-                    </strong>
-
-                    <span>
-                      Career Match
-                    </span>
-                  </div>
-
-                  <b>
-                    {career.score}%
-                  </b>
-
-                </div>
-              ))}
-
-          </div>
-        ) : (
-          <p>
-            Run career prediction or recommendations
-            to see suggested career paths.
-          </p>
-        )}
-
-        <Button
-          onClick={() =>
-            navigate('/recommendations')
-          }
-        >
-          View Recommendations
-        </Button>
 
       </section>
 

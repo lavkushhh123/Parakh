@@ -7,11 +7,25 @@ import Button from '../components/Button'
 
 function Profile() {
   const [profile, setProfile] = useState(() => {
-    const savedProfile = localStorage.getItem('studentProfile')
+    let userObj = null
+    let profileObj = null
+    try {
+      const savedUser = localStorage.getItem('user')
+      if (savedUser) userObj = JSON.parse(savedUser)
+    } catch {}
+    try {
+      const savedProfile = localStorage.getItem('studentProfile')
+      if (savedProfile) profileObj = JSON.parse(savedProfile)
+    } catch {}
 
-    return savedProfile
-      ? JSON.parse(savedProfile)
-      : studentData
+    const base = profileObj || studentData
+    return {
+      ...base,
+      name: userObj?.name || profileObj?.name || base.name || 'Student',
+      email: userObj?.email || profileObj?.email || base.email,
+      education: userObj?.education || profileObj?.education || base.education,
+      degree: userObj?.degree || profileObj?.degree || base.degree,
+    }
   })
 
   const handleChange = (e) => {
@@ -81,12 +95,14 @@ function Profile() {
 
   const initials = profile.name
     ? profile.name
+        .trim()
         .split(' ')
+        .filter(Boolean)
         .map((word) => word[0])
         .join('')
         .slice(0, 2)
-        .toUpperCase()
-    : 'L'
+        .toUpperCase() || 'S'
+    : 'S'
 
   return (
     <div className="profile-page">
@@ -188,7 +204,7 @@ function Profile() {
 
           <p>
             Complete your profile to get better
-            career recommendations.
+            career predictions and insights.
           </p>
 
         </div>

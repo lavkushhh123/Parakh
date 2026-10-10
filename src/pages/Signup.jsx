@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import Button from '../components/Button'
 import { signupUser } from '../services/api'
+import studentData from '../data/studentData'
 
 function Signup() {
 
@@ -13,6 +14,7 @@ function Signup() {
     name: '',
     email: '',
     password: '',
+    confirmPassword: '',
     education: '',
     degree: '',
   })
@@ -43,6 +45,14 @@ function Signup() {
 
     if (!passwordRegex.test(formData.password)) {
       return 'Password must be 8-20 characters and contain at least one letter and one number.'
+    }
+
+    if (!formData.confirmPassword) {
+      return 'Please confirm your password.'
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      return 'Passwords do not match.'
     }
 
     if (!formData.education.trim()) {
@@ -84,15 +94,34 @@ function Signup() {
         return
       }
 
-      localStorage.setItem(
-        'signupEmail',
-        response.email || requestData.email
-      )
-      localStorage.setItem('signupName', requestData.name)
-      toast.success(
-        response.message || 'Account created. OTP sent to your email.'
-      )
-      navigate('/verify-otp')
+      if (response.token) {
+        const userInfo = response.user || {
+          name: requestData.name,
+          email: requestData.email,
+          education: requestData.education,
+          degree: requestData.degree,
+        }
+
+        const profileData = {
+          ...studentData,
+          name: userInfo.name || requestData.name,
+          email: userInfo.email || requestData.email,
+          education: userInfo.education || requestData.education,
+          degree: userInfo.degree || requestData.degree,
+        }
+
+        localStorage.setItem('token', response.token)
+        localStorage.setItem('isLoggedIn', 'true')
+        localStorage.setItem('isVerified', 'true')
+        localStorage.setItem('user', JSON.stringify(userInfo))
+        localStorage.setItem('studentProfile', JSON.stringify(profileData))
+
+        toast.success(response.message || 'Account created successfully')
+        navigate('/')
+      } else {
+        toast.success(response.message || 'Account created successfully')
+        navigate('/login')
+      }
     } catch (error) {
       console.error('Signup failed:', error)
     } finally {
@@ -185,6 +214,26 @@ function Signup() {
               required
               onChange={handleChange}
               placeholder="8-20 characters with letters and numbers"
+            />
+
+          </div>
+
+          {/* Confirm Password */}
+          <div className="auth-field">
+
+            <label htmlFor="confirmPassword">
+              Confirm Password
+            </label>
+
+            <input
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              value={formData.confirmPassword}
+              autoComplete="new-password"
+              required
+              onChange={handleChange}
+              placeholder="Confirm your password"
             />
 
           </div>

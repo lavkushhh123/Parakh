@@ -241,14 +241,39 @@ export const analyzeCluster = async (data) => {
 // ==================== SKILL GAP API ====================
 
 export const analyzeSkillGap = async (data) => {
-  return apiRequest(
-    '/skill-gap',
-    {
+  try {
+    return await apiRequest('/api/skill-gap', {
       method: 'POST',
       body: JSON.stringify(data),
-    },
-    ML_API_URL
-  )
+    })
+  } catch (backendError) {
+    // Fallback to ML service if backend endpoint fails
+    const skillsDict = Array.isArray(data.skills)
+      ? data.skills.reduce((acc, s) => {
+          acc[s.toLowerCase().replace(/[^a-z0-9]/g, '_')] = 1
+          return acc
+        }, {})
+      : data.skills || {}
+
+    const mlResponse = await apiRequest(
+      '/skill-gap',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          career: data.career,
+          skills: skillsDict,
+        }),
+      },
+      ML_API_URL
+    )
+
+    return {
+      career: mlResponse.career || data.career,
+      current_skills: mlResponse.skills_you_have || mlResponse.current_skills || [],
+      missing_skills: mlResponse.skills_to_learn || mlResponse.missing_skills || [],
+      match_score: mlResponse.match_score,
+    }
+  }
 }
 
 // ==================== OTHER EXISTING APIs ====================

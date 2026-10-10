@@ -19,8 +19,34 @@ function Navbar({
   const isLoggedIn =
     localStorage.getItem('isLoggedIn') === 'true'
 
+  const getUserName = () => {
+    try {
+      const u = localStorage.getItem('user')
+      if (u) {
+        const parsed = JSON.parse(u)
+        if (parsed?.name) return parsed.name
+      }
+      const p = localStorage.getItem('studentProfile')
+      if (p) {
+        const parsed = JSON.parse(p)
+        if (parsed?.name) return parsed.name
+      }
+    } catch {}
+    return 'Student'
+  }
+
+  const userName = getUserName()
+  const userInitial = userName.trim().charAt(0).toUpperCase() || 'S'
+
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn')
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    localStorage.removeItem('isVerified')
+    localStorage.removeItem('studentProfile')
+    localStorage.removeItem('careerPrediction')
+    localStorage.removeItem('skillGapResult')
+    localStorage.removeItem('clusterResult')
     navigate('/')
     window.location.reload()
   }
@@ -80,11 +106,11 @@ function Navbar({
         ) : (
           <>
             <div className="navbar-avatar">
-              L
+              {userInitial}
             </div>
 
             <div className="navbar-user-info">
-              <strong>Lavkush Nishad</strong>
+              <strong>{userName}</strong>
               <span>Student</span>
             </div>
 

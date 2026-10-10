@@ -1,8 +1,21 @@
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 import studentData from '../data/studentData'
 import SKILLS from '../data/skills'
 import Button from '../components/Button'
 import { analyzeSkillGap } from '../services/api'
+
+const CAREER_OPTIONS = [
+  'Data Scientist',
+  'ML Engineer',
+  'Data Analyst',
+  'AI Engineer',
+  'Software Developer',
+  'Web Developer',
+  'Backend Developer',
+  'Cybersecurity Analyst',
+  'Cloud Engineer',
+]
 
 function SkillGap() {
 
@@ -14,6 +27,20 @@ function SkillGap() {
     return savedProfile
       ? JSON.parse(savedProfile)
       : studentData
+  })
+
+  // Selected target career
+  const [targetCareer, setTargetCareer] = useState(() => {
+    const savedPrediction = localStorage.getItem('careerPrediction')
+    if (savedPrediction) {
+      try {
+        const parsed = JSON.parse(savedPrediction)
+        if (parsed?.career) return parsed.career
+      } catch {
+        // ignore
+      }
+    }
+    return 'Data Scientist'
   })
 
   // Load previously saved skill gap result
@@ -29,26 +56,27 @@ function SkillGap() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  // Get selected skill keys
-  const selectedSkills = SKILLS
-    .filter((skill) => student.skills[skill.key] === 1)
-    .map((skill) => skill.key)
+  // Get active skills formatted for matching
+  const selectedSkills = SKILLS.filter(
+    (skill) => student?.skills?.[skill.key] === 1
+  )
+
+  const formattedSkills = selectedSkills.flatMap((skill) => {
+    const list = [skill.name, skill.key]
+    if (skill.name.includes('/')) {
+      skill.name.split('/').forEach((part) => list.push(part.trim()))
+    }
+    return list
+  })
 
   // Analyze skill gap
   const handleAnalyze = async () => {
-
-    // Get predicted career from localStorage
-    const savedPrediction =
-      localStorage.getItem('careerPrediction')
-
-    const predictedCareer = savedPrediction
-      ? JSON.parse(savedPrediction).career
-      : ''
+    const careerToAnalyze = (targetCareer || 'Data Scientist').trim()
 
     // Data required by Skill Gap API
     const requestData = {
-      career: predictedCareer,
-      skills: selectedSkills,
+      career: careerToAnalyze,
+      skills: formattedSkills,
     }
 
     console.log('Skill Gap Request:', requestData)
@@ -57,33 +85,55 @@ function SkillGap() {
     setError('')
 
     try {
-
       // Send career and skills to backend
       const result = await analyzeSkillGap(requestData)
 
       console.log('Skill Gap Response:', result)
 
+      if (!result) {
+        throw new Error('No response received')
+      }
+
+      const normalized = {
+        career: result.career || careerToAnalyze,
+        current_skills:
+          result.current_skills || result.skills_you_have || [],
+        missing_skills:
+          result.missing_skills || result.skills_to_learn || [],
+        match_score:
+          typeof result.match_score === 'number'
+            ? result.match_score
+            : Math.round(
+                ((result.current_skills?.length || 0) /
+                  Math.max(
+                    1,
+                    (result.current_skills?.length || 0) +
+                      (result.missing_skills?.length || 0)
+                  )) *
+                  100
+              ),
+      }
+
       // Show result on Skill Gap page
-      setGapResult(result)
+      setGapResult(normalized)
 
       // Save result for Dashboard
       localStorage.setItem(
         'skillGapResult',
-        JSON.stringify(result)
+        JSON.stringify(normalized)
       )
 
-    } catch (err) {
+      toast.success('Skill gap analysis completed successfully!')
 
-      // Show error if API request fails
+    } catch (err) {
       console.error('Skill Gap Error:', err)
 
       setError(
-        'Unable to analyze skill gap right now.'
+        'Unable to analyze skill gap right now. Please try again.'
       )
+      toast.error('Skill gap analysis failed')
 
     } finally {
-
-      // Stop loading
       setLoading(false)
     }
   }
@@ -112,11 +162,46 @@ function SkillGap() {
         </div>
 
         {/* Analyze button */}
-        <Button onClick={handleAnalyze}>
+        <Button onClick={handleAnalyze} disabled={loading}>
           {loading
             ? 'Analyzing...'
             : 'Analyze Skill Gap'}
         </Button>
+
+      </div>
+
+      {/* Target career selector */}
+      <div className="profile-card">
+
+        <div className="section-heading">
+
+          <p className="page-label">
+            TARGET CAREER
+          </p>
+
+          <h2>
+            Select Target Career
+          </h2>
+
+          <p>
+            Choose the target role to compare your current skills against.
+          </p>
+
+        </div>
+
+        <div className="auth-field" style={{ maxWidth: '420px', marginTop: '12px' }}>
+          <select
+            id="target-career-select"
+            value={targetCareer}
+            onChange={(e) => setTargetCareer(e.target.value)}
+          >
+            {CAREER_OPTIONS.map((career) => (
+              <option key={career} value={career}>
+                {career}
+              </option>
+            ))}
+          </select>
+        </div>
 
       </div>
 
@@ -182,15 +267,29 @@ function SkillGap() {
           {/* Target career */}
           <div className="profile-card">
 
-            <div className="section-heading">
+            <div className="section-heading" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 
-              <p className="page-label">
-                TARGET CAREER
-              </p>
+              <div>
+                <p className="page-label">
+                  TARGET CAREER
+                </p>
 
-              <h2>
-                {gapResult.career}
-              </h2>
+                <h2>
+                  {gapResult.career}
+                </h2>
+              </div>
+
+              {typeof gapResult.match_score === 'number' && (
+                <div style={{ textAlign: 'right' }}>
+                  <p className="page-label">
+                    SKILL MATCH
+                  </p>
+
+                  <h2 style={{ color: 'var(--color-primary, #6366f1)' }}>
+                    {Math.round(gapResult.match_score)}%
+                  </h2>
+                </div>
+              )}
 
             </div>
 

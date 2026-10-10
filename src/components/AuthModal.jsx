@@ -14,11 +14,10 @@ import {
 } from 'lucide-react'
 
 import Button from './Button'
+import studentData from '../data/studentData'
 
 import {
   signupUser,
-  verifySignupOtp,
-  resendSignupOtp,
   loginUser,
   forgotPassword,
   resetPassword,
@@ -34,6 +33,7 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
     name: '',
     email: '',
     password: '',
+    confirmPassword: '',
     education: '',
     degree: '',
     otp: '',
@@ -41,6 +41,7 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
   })
 
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
 
   const [error, setError] = useState('')
@@ -61,6 +62,7 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
     setAuthStep(newMode)
     setError('')
     setShowPassword(false)
+    setShowConfirmPassword(false)
     setShowNewPassword(false)
 
     onModeChange(newMode)
@@ -107,6 +109,14 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
 
     if (!passwordRegex.test(formData.password)) {
       return 'Password must be 8-20 characters and contain letters and numbers.'
+    }
+
+    if (!formData.confirmPassword) {
+      return 'Please confirm your password.'
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      return 'Passwords do not match.'
     }
 
     if (!formData.education.trim()) {
@@ -177,6 +187,20 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
 
       if (response.user) {
         localStorage.setItem('user', JSON.stringify(response.user))
+
+        const existingProfile = localStorage.getItem('studentProfile')
+        const base = existingProfile ? JSON.parse(existingProfile) : studentData
+
+        localStorage.setItem(
+          'studentProfile',
+          JSON.stringify({
+            ...base,
+            name: response.user.name || base.name,
+            email: response.user.email || base.email,
+            education: response.user.education || base.education,
+            degree: response.user.degree || base.degree,
+          })
+        )
       }
 
       toast.success(response.message || 'Login successful')
@@ -210,83 +234,42 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
         degree: formData.degree.trim(),
       })
 
-      localStorage.setItem('signupEmail', formData.email.trim().toLowerCase())
-      localStorage.setItem('signupName', formData.name.trim())
-      setAuthStep('verify-otp')
-      toast.success(response?.message || 'Account created. OTP sent to your email.')
-    } catch (error) {
-      console.error('Signup failed:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // VERIFY SIGNUP OTP
-  const handleVerifyOtp = async () => {
-    const validationError = validateOtp()
-
-    if (validationError) {
-      setError(validationError)
-      return
-    }
-
-    try {
-      setLoading(true)
-      setError('')
-
-      const response = await verifySignupOtp({
-        email: formData.email.trim().toLowerCase(),
-        otp: formData.otp,
-      })
-
-      if (!response?.token) {
+      if (!response) {
         toast.error('Something Went Wrong')
         return
       }
 
-      localStorage.setItem('token', response.token)
-      localStorage.setItem('isLoggedIn', 'true')
-      localStorage.setItem('isVerified', 'true')
-      localStorage.setItem(
-        'user',
-        JSON.stringify({
-          ...(response.user || {}),
+      if (response.token) {
+        const userInfo = response.user || {
           name: formData.name.trim(),
           email: formData.email.trim().toLowerCase(),
-        })
-      )
-      localStorage.removeItem('signupEmail')
-      localStorage.removeItem('signupName')
+          education: formData.education.trim(),
+          degree: formData.degree.trim(),
+        }
 
-      toast.success(response.message || 'Email verified successfully')
-      onClose()
-      navigate('/')
+        const profileData = {
+          ...studentData,
+          name: userInfo.name || formData.name.trim(),
+          email: userInfo.email || formData.email.trim().toLowerCase(),
+          education: userInfo.education || formData.education.trim(),
+          degree: userInfo.degree || formData.degree.trim(),
+        }
+
+        localStorage.setItem('token', response.token)
+        localStorage.setItem('isLoggedIn', 'true')
+        localStorage.setItem('isVerified', 'true')
+        localStorage.setItem('user', JSON.stringify(userInfo))
+        localStorage.setItem('studentProfile', JSON.stringify(profileData))
+
+        toast.success(response.message || 'Account created successfully')
+        onClose()
+        navigate('/')
+      } else {
+        toast.success(response.message || 'Account created successfully')
+        switchAuthMode('login')
+      }
     } catch (error) {
-      console.error('OTP verification failed:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // RESEND SIGNUP OTP
-  const handleResendOtp = async () => {
-    const validationError = validateEmail()
-    if (validationError) {
-      setError(validationError)
-      return
-    }
-
-    try {
-      setLoading(true)
-      setError('')
-
-      const response = await resendSignupOtp({
-        email: formData.email.trim().toLowerCase(),
-      })
-
-      toast.success(response.message || 'New OTP sent successfully')
-    } catch (error) {
-      console.error('Resending signup OTP failed:', error)
+      console.error('Signup failed:', error)
     } finally {
       setLoading(false)
     }
@@ -373,11 +356,6 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
       return
     }
 
-    if (authStep === 'verify-otp') {
-      await handleVerifyOtp()
-      return
-    }
-
     if (authStep === 'reset-password') {
       await handleResetPassword()
     }
@@ -415,9 +393,6 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
       case 'forgot-password':
         return 'Forgot Password'
 
-      case 'verify-otp':
-        return 'Verify OTP'
-
       case 'reset-password':
         return 'Reset Password'
 
@@ -437,9 +412,6 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
       case 'forgot-password':
         return 'Enter your registered email to receive an OTP.'
 
-      case 'verify-otp':
-        return 'Enter the 6 digit OTP sent to your email.'
-
       case 'reset-password':
         return 'Enter the OTP and create a new password.'
 
@@ -449,7 +421,6 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
   }
 
   const isEmailDisabled =
-    authStep === 'verify-otp' ||
     authStep === 'reset-password'
 
   const isLoginOrSignup =
@@ -583,6 +554,52 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
           )}
 
           {authStep === 'signup' && (
+            <div className="auth-field">
+              <label htmlFor="auth-confirm-password">
+                Confirm Password
+              </label>
+
+              <div className="auth-input-wrapper">
+                <Lock size={18} />
+
+                <input
+                  id="auth-confirm-password"
+                  name="confirmPassword"
+                  type={
+                    showConfirmPassword
+                      ? 'text'
+                      : 'password'
+                  }
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm your password"
+                />
+
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() =>
+                    setShowConfirmPassword(
+                      (prev) => !prev
+                    )
+                  }
+                  aria-label={
+                    showConfirmPassword
+                      ? 'Hide confirm password'
+                      : 'Show confirm password'
+                  }
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {authStep === 'signup' && (
             <>
               <div className="auth-field">
                 <label htmlFor="auth-education">
@@ -622,33 +639,6 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
                 </div>
               </div>
             </>
-          )}
-
-          {authStep === 'verify-otp' && (
-            <div className="auth-field">
-              <label htmlFor="auth-otp">
-                OTP
-              </label>
-
-              <div className="auth-input-wrapper">
-                <Lock size={18} />
-
-                <input
-                  id="auth-otp"
-                  name="otp"
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={6}
-                  value={formData.otp}
-                  onChange={(event) => {
-                    const otp = event.target.value.replace(/\D/g, '').slice(0, 6)
-                    setFormData((prev) => ({ ...prev, otp }))
-                    setError('')
-                  }}
-                  placeholder="Enter 6 digit OTP"
-                />
-              </div>
-            </div>
           )}
 
           {authStep === 'forgot-password' && (
@@ -736,9 +726,7 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
                   ? 'Create Account'
                   : authStep === 'forgot-password'
                     ? 'Send OTP'
-                    : authStep === 'verify-otp'
-                      ? 'Verify OTP'
-                      : 'Reset Password'}
+                    : 'Reset Password'}
           </Button>
         </form>
 
@@ -752,19 +740,7 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
           </button>
         )}
 
-        {authStep === 'verify-otp' && (
-          <button
-            type="button"
-            className="auth-link-button"
-            onClick={handleResendOtp}
-            disabled={loading}
-          >
-            Resend OTP
-          </button>
-        )}
-
         {(authStep === 'forgot-password' ||
-          authStep === 'verify-otp' ||
           authStep === 'reset-password') && (
           <button
             type="button"

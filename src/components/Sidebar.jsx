@@ -8,8 +8,6 @@ import {
   Target,
   Layers3,
   LayoutDashboard,
-  Sparkles,
-  BookOpen,
 } from 'lucide-react'
 
 
@@ -18,6 +16,24 @@ const navClass = ({ isActive }) =>
 
 
 function Sidebar({ isOpen, onClose }) {
+  const getUserName = () => {
+    try {
+      const u = localStorage.getItem('user')
+      if (u) {
+        const parsed = JSON.parse(u)
+        if (parsed?.name) return parsed.name
+      }
+      const p = localStorage.getItem('studentProfile')
+      if (p) {
+        const parsed = JSON.parse(p)
+        if (parsed?.name) return parsed.name
+      }
+    } catch {}
+    return 'Student'
+  }
+
+  const userName = getUserName()
+  const userInitial = userName.trim().charAt(0).toUpperCase() || 'S'
 
   return (
     <aside
@@ -110,38 +126,17 @@ function Sidebar({ isOpen, onClose }) {
           <LayoutDashboard size={17} />
           Dashboard
         </NavLink>
-
-
-        <NavLink
-          to="/recommendations"
-          className={navClass}
-          onClick={onClose}
-        >
-          <Sparkles size={17} />
-          Recommendations
-        </NavLink>
-
-
-        <NavLink
-          to="/career-details"
-          className={navClass}
-          onClick={onClose}
-        >
-          <BookOpen size={17} />
-          Career Details
-        </NavLink>
-
       </nav>
 
 
       <div className="sidebar-bottom">
 
         <div className="user-avatar">
-          L
+          {userInitial}
         </div>
 
         <div>
-          <strong>Lavkush Nishad</strong>
+          <strong>{userName}</strong>
           <span>Student</span>
         </div>
 

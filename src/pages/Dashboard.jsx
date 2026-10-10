@@ -37,19 +37,6 @@ function Dashboard() {
       : null
   })
 
-  // Saved career recommendations ko localStorage se read kar rahe hain
-// Recommendations page API response ko "careerRecommendations" key me save karta hai
-const [recommendations] = useState(() => {
-  const savedRecommendations =
-    localStorage.getItem('careerRecommendations')
-
-  // Agar saved recommendations hain to JSON ko JavaScript object me convert karo
-  // Agar nahi hain to null rakho
-  return savedRecommendations
-    ? JSON.parse(savedRecommendations)
-    : null
-})
-
   // Load saved skill gap result
   const [gap] = useState(() => {
     const savedGap =
@@ -65,24 +52,14 @@ const [recommendations] = useState(() => {
     (skill) => student.skills[skill.key] === 1
   )
 
-  // Temporary career list
-  // Later this will come from Recommendation API
-  
-  // Recommendations available hain to unhe Dashboard par show karo
-const careers = recommendations?.recommendations?.length
-  ? recommendations.recommendations.map((item) => ({
-      name: item.career,
-      score: Math.round(item.score * 100),
-    }))
-  : [
-      // Recommendations nahi hain to prediction ko fallback rakho
-      {
-        name: prediction?.career || 'Not Predicted Yet',
-        score: prediction
-          ? Math.round(prediction.confidence * 100)
-          : 0,
-      },
-    ]
+  const careers = [
+    {
+      name: prediction?.career || 'Not Predicted Yet',
+      score: prediction
+        ? Math.round(prediction.confidence * 100)
+        : 0,
+    },
+  ]
 
     
   return (

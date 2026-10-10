@@ -6,6 +6,7 @@ import {
   Routes,
   Route,
   useLocation,
+  Navigate,
 } from 'react-router-dom'
 
 import { Menu, X } from 'lucide-react'
@@ -23,12 +24,9 @@ import Cluster from './pages/Cluster'
 import Dashboard from './pages/Dashboard'
 
 import Signup from './pages/Signup'
-import VerifyOtp from './pages/VerifyOtp'
 import Login from './pages/Login'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
-import Recommendations from './pages/Recommendations'
-import CareerDetails from './pages/CareerDetails'
 
 
 // Protected pages sirf logged-in user ko dikhenge
@@ -59,7 +57,6 @@ function AppLayout({
   const authPages = [
     '/login',
     '/signup',
-    '/verify-otp',
     '/forgot-password',
     '/reset-password',
   ]
@@ -160,7 +157,7 @@ function AppLayout({
 
             <Route
               path="/verify-otp"
-              element={<VerifyOtp />}
+              element={<Navigate to="/" replace />}
             />
 
             <Route
@@ -246,20 +243,12 @@ function AppLayout({
 
             <Route
               path="/recommendations"
-              element={
-                <ProtectedRoute>
-                  <Recommendations />
-                </ProtectedRoute>
-              }
+              element={<Navigate to="/" replace />}
             />
 
             <Route
               path="/career-details"
-              element={
-                <ProtectedRoute>
-                  <CareerDetails />
-                </ProtectedRoute>
-              }
+              element={<Navigate to="/" replace />}
             />
 
           </Routes>
