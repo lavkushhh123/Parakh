@@ -99,10 +99,12 @@
 
 
 
+import { toast } from 'react-toastify'
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || ''
-// const ML_API_URL =
-//   import.meta.env.VITE_ML_API_URL ||
-//   'https://parakh-deployed-model.onrender.com'
+const ML_API_URL =
+  import.meta.env.VITE_ML_API_URL ||
+  'https://parakh-deployed-model.onrender.com'
 
 // ==================== COMMON API REQUEST ====================
 
@@ -111,32 +113,50 @@ const apiRequest = async (
   options = {},
   baseURL = API_BASE_URL
 ) => {
-  const response = await fetch(`${baseURL}${endpoint}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers || {}),
-    },
-  })
-
-  const text = await response.text()
-
-  let data
+  let response
+  const requestUrl = `${baseURL.replace(/\/+$/, '')}${endpoint}`
 
   try {
-    data = text ? JSON.parse(text) : null
-  } catch {
-    throw new Error(
-      `Server returned an invalid response (${response.status}). Please check the API URL.`
-    )
+    response = await fetch(requestUrl, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+    })
+  } catch (error) {
+    toast.error('Something Went Wrong')
+    throw new Error('Something Went Wrong', { cause: error })
+  }
+
+  let text
+
+  try {
+    text = await response.text()
+  } catch (error) {
+    toast.error('Something Went Wrong')
+    throw new Error('Something Went Wrong', { cause: error })
+  }
+
+  let data = null
+
+  if (text) {
+    try {
+      data = JSON.parse(text)
+    } catch {
+      toast.error('Something Went Wrong')
+      throw new Error('Something Went Wrong')
+    }
   }
 
   if (!response.ok) {
-    throw new Error(
-      data?.message ||
-      data?.error ||
-      `Request failed with status ${response.status}`
-    )
+    const message =
+      (typeof data?.message === 'string' && data.message.trim()) ||
+      (typeof data?.error === 'string' && data.error.trim()) ||
+      'Something Went Wrong'
+
+    toast.error(message)
+    throw new Error(message)
   }
 
   return data

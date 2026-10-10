@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import Button from '../components/Button'
+import { loginUser } from '../services/api'
 
 function Login() {
 
@@ -11,9 +13,7 @@ function Login() {
     email: '',
     password: '',
   })
-
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const [loading, setLoading] = useState(false)
 
   // Handle input changes
   const handleChange = (event) => {
@@ -28,7 +28,7 @@ function Login() {
   // Validate login data
   const validateForm = () => {
 
-    if (!formData.email.includes('@')) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
       return 'Please enter a valid email.'
     }
 
@@ -40,34 +40,43 @@ function Login() {
   }
 
   // Handle login form submission
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-
-    setError('')
-    setSuccess('')
 
     const validationError = validateForm()
 
     if (validationError) {
-      setError(validationError)
+      toast.error(validationError)
       return
     }
 
-    // Backend login API ke liye request data
-    const requestData = {
-      email: formData.email.trim(),
-      password: formData.password,
+    try {
+      setLoading(true)
+      const response = await loginUser({
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+      })
+
+      if (!response?.token) {
+        toast.error('Something Went Wrong')
+        return
+      }
+
+      localStorage.setItem('token', response.token)
+      localStorage.setItem('isVerified', 'true')
+
+      if (response.user) {
+        localStorage.setItem('user', JSON.stringify(response.user))
+      }
+
+      localStorage.setItem('isLoggedIn', 'true')
+      toast.success(response.message || 'Login successful')
+      navigate('/')
+    } catch (error) {
+      console.error('Login failed:', error)
+    } finally {
+      setLoading(false)
     }
-
-    console.log('Login Request:', requestData)
-
-    // Temporary login state
-    localStorage.setItem('isLoggedIn', 'true')
-
-    setSuccess('Login successful!')
-
-    // Login ke baad Home page par jao
-    navigate('/')
   }
 
   return (
@@ -97,20 +106,6 @@ function Login() {
 
         </div>
 
-        {/* Error message */}
-        {error && (
-          <div className="auth-message auth-error">
-            {error}
-          </div>
-        )}
-
-        {/* Success message */}
-        {success && (
-          <div className="auth-message auth-success">
-            {success}
-          </div>
-        )}
-
         <form onSubmit={handleSubmit}>
 
           {/* Email */}
@@ -125,6 +120,8 @@ function Login() {
               name="email"
               type="email"
               value={formData.email}
+              autoComplete="email"
+              required
               onChange={handleChange}
               placeholder="Enter your email"
             />
@@ -143,6 +140,8 @@ function Login() {
               name="password"
               type="password"
               value={formData.password}
+              autoComplete="current-password"
+              required
               onChange={handleChange}
               placeholder="Enter your password"
             />
@@ -150,8 +149,8 @@ function Login() {
           </div>
 
           {/* Login button */}
-          <Button type="submit">
-            Login
+          <Button type="submit" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
           </Button>
 
         </form>

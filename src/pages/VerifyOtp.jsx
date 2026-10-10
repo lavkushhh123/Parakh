@@ -1,200 +1,153 @@
-
 import { useState } from 'react'
-import Button from '../components/Button'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import Button from '../components/Button'
+import { resendSignupOtp, verifySignupOtp } from '../services/api'
 
 function VerifyOtp() {
   const navigate = useNavigate()
-
-  // OTP verification data
   const [formData, setFormData] = useState({
-    email: '',
+    email: localStorage.getItem('signupEmail') || '',
     otp: '',
   })
+  const [loading, setLoading] = useState(false)
 
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
-
-  // Handle input changes
   const handleChange = (event) => {
     const { name, value } = event.target
 
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === 'otp' ? value.replace(/\D/g, '').slice(0, 6) : value,
     }))
   }
 
-  // Validate OTP according to backend schema
-  const validateOtp = () => {
-    if (!formData.email.includes('@')) {
+  const validateEmail = () => {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
       return 'Please enter a valid email.'
-    }
-
-    // OTP must contain exactly 6 digits
-    const otpRegex = /^\d{6}$/
-
-    if (!otpRegex.test(formData.otp)) {
-      return 'OTP must be exactly 6 digits.'
     }
 
     return ''
   }
 
-  // Verify OTP
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
 
-    setError('')
-    setSuccess('')
-
-    const validationError = validateOtp()
-
-    if (validationError) {
-      setError(validationError)
+    const emailError = validateEmail()
+    if (emailError) {
+      toast.error(emailError)
       return
     }
 
-    // Exact JSON structure for verifyOtpSchema
-    const requestData = {
-      email: formData.email.trim(),
-      otp: formData.otp,
+    if (!/^\d{6}$/.test(formData.otp)) {
+      toast.error('OTP must be exactly 6 digits.')
+      return
     }
 
-    console.log('Verify OTP Request:', requestData)
+    setLoading(true)
+    try {
+      const response = await verifySignupOtp({
+        email: formData.email.trim().toLowerCase(),
+        otp: formData.otp,
+      })
 
-    // Temporary frontend verification
-    // Real backend OTP verification will be connected later
-    localStorage.setItem('isVerified', 'true')
-    localStorage.setItem('isLoggedIn', 'true')
+      if (!response?.token) {
+        toast.error('Something Went Wrong')
+        return
+      }
 
-    setSuccess('Email verified successfully!')
-
-    // Verification ke baad Home page par jao
-    navigate('/')
+      localStorage.setItem('token', response.token)
+      localStorage.setItem('isVerified', 'true')
+      localStorage.setItem('isLoggedIn', 'true')
+      localStorage.setItem('user', JSON.stringify({
+        name: localStorage.getItem('signupName') || '',
+        email: formData.email.trim().toLowerCase(),
+      }))
+      localStorage.removeItem('signupEmail')
+      localStorage.removeItem('signupName')
+      toast.success(response.message || 'Email verified successfully')
+      navigate('/')
+    } catch (error) {
+      console.error('OTP verification failed:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  // Resend OTP
-  const handleResendOtp = () => {
-    setError('')
-    setSuccess('')
-
-    if (!formData.email.includes('@')) {
-      setError('Please enter a valid email first.')
+  const handleResendOtp = async () => {
+    const emailError = validateEmail()
+    if (emailError) {
+      toast.error(emailError)
       return
     }
 
-    // Exact JSON structure for resendOtpSchema
-    const requestData = {
-      email: formData.email.trim(),
+    setLoading(true)
+    try {
+      const response = await resendSignupOtp({
+        email: formData.email.trim().toLowerCase(),
+      })
+      toast.success(response.message || 'New OTP sent successfully')
+    } catch (error) {
+      console.error('Resending signup OTP failed:', error)
+    } finally {
+      setLoading(false)
     }
-
-    console.log('Resend OTP Request:', requestData)
-
-    // Temporary message
-    // Real API will be connected later
-    setSuccess(
-      'Resend OTP request is ready for API integration.'
-    )
   }
 
   return (
     <div className="auth-page">
       <div className="auth-card">
-
-        {/* Page heading */}
         <div className="auth-header">
-
-          <div className="auth-logo">
-            P
-          </div>
-
-          <p className="page-label">
-            PARAKH
-          </p>
-
-          <h1>
-            Verify Email
-          </h1>
-
-          <p>
-            Enter the 6-digit OTP sent to your email
-            address.
-          </p>
-
+          <div className="auth-logo">P</div>
+          <p className="page-label">PARAKH</p>
+          <h1>Verify Email</h1>
+          <p>Enter the 6-digit OTP sent to your email address.</p>
         </div>
 
-        {/* Error message */}
-        {error && (
-          <div className="auth-message auth-error">
-            {error}
-          </div>
-        )}
-
-        {/* Success message */}
-        {success && (
-          <div className="auth-message auth-success">
-            {success}
-          </div>
-        )}
-
         <form onSubmit={handleSubmit}>
-
-          {/* Email */}
           <div className="auth-field">
-
-            <label htmlFor="email">
-              Email
-            </label>
-
+            <label htmlFor="email">Email</label>
             <input
               id="email"
               name="email"
               type="email"
               value={formData.email}
+              autoComplete="email"
+              required
               onChange={handleChange}
               placeholder="Enter your email"
             />
-
           </div>
 
-          {/* OTP */}
           <div className="auth-field">
-
-            <label htmlFor="otp">
-              OTP
-            </label>
-
+            <label htmlFor="otp">OTP</label>
             <input
               id="otp"
               name="otp"
               type="text"
               inputMode="numeric"
               maxLength={6}
+              pattern="[0-9]{6}"
+              required
               value={formData.otp}
               onChange={handleChange}
               placeholder="Enter 6-digit OTP"
             />
-
           </div>
 
-          {/* Verify button */}
-          <Button type="submit">
-            Verify OTP
+          <Button type="submit" disabled={loading}>
+            {loading ? 'Please wait...' : 'Verify OTP'}
           </Button>
-
         </form>
 
-        {/* Resend OTP */}
         <button
           type="button"
           className="auth-link-button"
           onClick={handleResendOtp}
+          disabled={loading}
         >
           Resend OTP
         </button>
 
-        {/* Login link */}
         <button
           type="button"
           className="auth-link-button"
@@ -202,7 +155,6 @@ function VerifyOtp() {
         >
           Already have an account? Login
         </button>
-
       </div>
     </div>
   )

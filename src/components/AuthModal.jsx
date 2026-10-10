@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import {
   User,
   Mail,
@@ -23,6 +25,7 @@ import {
 } from '../services/api'
 
 function AuthModal({ mode = 'login', onClose, onModeChange }) {
+  const navigate = useNavigate()
   const [authStep, setAuthStep] = useState(
     mode === 'login' ? 'login' : 'signup'
   )
@@ -41,7 +44,6 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
   const [showNewPassword, setShowNewPassword] = useState(false)
 
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleChange = (event) => {
@@ -53,13 +55,11 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
     }))
 
     setError('')
-    setSuccess('')
   }
 
   const switchAuthMode = (newMode) => {
     setAuthStep(newMode)
     setError('')
-    setSuccess('')
     setShowPassword(false)
     setShowNewPassword(false)
 
@@ -67,11 +67,7 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
   }
 
   const validateEmail = () => {
-    if (!formData.email.trim()) {
-      return 'Email is required.'
-    }
-
-    if (!formData.email.includes('@')) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
       return 'Please enter a valid email.'
     }
 
@@ -164,30 +160,30 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
     try {
       setLoading(true)
       setError('')
-      setSuccess('')
 
       const response = await loginUser({
-        email: formData.email.trim(),
+        email: formData.email.trim().toLowerCase(),
         password: formData.password,
       })
 
-      if (response.token) {
-        localStorage.setItem('token', response.token)
+      if (!response?.token) {
+        toast.error('Something Went Wrong')
+        return
       }
 
+      localStorage.setItem('token', response.token)
       localStorage.setItem('isLoggedIn', 'true')
+      localStorage.setItem('isVerified', 'true')
 
       if (response.user) {
-        localStorage.setItem(
-          'user',
-          JSON.stringify(response.user)
-        )
+        localStorage.setItem('user', JSON.stringify(response.user))
       }
 
+      toast.success(response.message || 'Login successful')
       onClose()
-      window.location.href = '/'
+      navigate('/')
     } catch (error) {
-      setError(error.message || 'Login failed.')
+      console.error('Login failed:', error)
     } finally {
       setLoading(false)
     }
@@ -205,24 +201,21 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
     try {
       setLoading(true)
       setError('')
-      setSuccess('')
 
       const response = await signupUser({
         name: formData.name.trim(),
-        email: formData.email.trim(),
+        email: formData.email.trim().toLowerCase(),
         password: formData.password,
         education: formData.education.trim(),
         degree: formData.degree.trim(),
       })
 
+      localStorage.setItem('signupEmail', formData.email.trim().toLowerCase())
+      localStorage.setItem('signupName', formData.name.trim())
       setAuthStep('verify-otp')
-
-      setSuccess(
-        response.message ||
-          'Account created. OTP sent to your email.'
-      )
+      toast.success(response?.message || 'Account created. OTP sent to your email.')
     } catch (error) {
-      setError(error.message || 'Signup failed.')
+      console.error('Signup failed:', error)
     } finally {
       setLoading(false)
     }
@@ -240,41 +233,36 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
     try {
       setLoading(true)
       setError('')
-      setSuccess('')
 
       const response = await verifySignupOtp({
-        email: formData.email.trim(),
+        email: formData.email.trim().toLowerCase(),
         otp: formData.otp,
       })
 
-      if (response.token) {
-        localStorage.setItem('token', response.token)
+      if (!response?.token) {
+        toast.error('Something Went Wrong')
+        return
       }
 
+      localStorage.setItem('token', response.token)
       localStorage.setItem('isLoggedIn', 'true')
-
+      localStorage.setItem('isVerified', 'true')
       localStorage.setItem(
         'user',
         JSON.stringify({
-          id: response.user?.id || '',
+          ...(response.user || {}),
           name: formData.name.trim(),
-          email: formData.email.trim(),
+          email: formData.email.trim().toLowerCase(),
         })
       )
+      localStorage.removeItem('signupEmail')
+      localStorage.removeItem('signupName')
 
-      setSuccess(
-        response.message ||
-          'Email verified successfully.'
-      )
-
-      setTimeout(() => {
-        onClose()
-        window.location.href = '/'
-      }, 700)
+      toast.success(response.message || 'Email verified successfully')
+      onClose()
+      navigate('/')
     } catch (error) {
-      setError(
-        error.message || 'OTP verification failed.'
-      )
+      console.error('OTP verification failed:', error)
     } finally {
       setLoading(false)
     }
@@ -282,23 +270,23 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
 
   // RESEND SIGNUP OTP
   const handleResendOtp = async () => {
+    const validationError = validateEmail()
+    if (validationError) {
+      setError(validationError)
+      return
+    }
+
     try {
       setLoading(true)
       setError('')
-      setSuccess('')
 
       const response = await resendSignupOtp({
-        email: formData.email.trim(),
+        email: formData.email.trim().toLowerCase(),
       })
 
-      setSuccess(
-        response.message ||
-          'New OTP sent successfully.'
-      )
+      toast.success(response.message || 'New OTP sent successfully')
     } catch (error) {
-      setError(
-        error.message || 'Unable to resend OTP.'
-      )
+      console.error('Resending signup OTP failed:', error)
     } finally {
       setLoading(false)
     }
@@ -316,22 +304,16 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
     try {
       setLoading(true)
       setError('')
-      setSuccess('')
 
       const response = await forgotPassword({
-        email: formData.email.trim(),
+        email: formData.email.trim().toLowerCase(),
       })
 
       setAuthStep('reset-password')
 
-      setSuccess(
-        response.message ||
-          'OTP sent successfully. Check your email.'
-      )
+      toast.success(response.message || 'OTP sent successfully. Check your email.')
     } catch (error) {
-      setError(
-        error.message || 'Unable to send OTP.'
-      )
+      console.error('Sending password reset OTP failed:', error)
     } finally {
       setLoading(false)
     }
@@ -349,20 +331,16 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
     try {
       setLoading(true)
       setError('')
-      setSuccess('')
 
       const response = await resetPassword({
-        email: formData.email.trim(),
+        email: formData.email.trim().toLowerCase(),
         otp: formData.otp,
         newPassword: formData.newPassword,
       })
 
       setAuthStep('login')
 
-      setSuccess(
-        response.message ||
-          'Password reset successfully. You can login now.'
-      )
+      toast.success(response.message || 'Password reset successfully. You can login now.')
 
       setFormData((prev) => ({
         ...prev,
@@ -371,9 +349,7 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
         otp: '',
       }))
     } catch (error) {
-      setError(
-        error.message || 'Password reset failed.'
-      )
+      console.error('Resetting password failed:', error)
     } finally {
       setLoading(false)
     }
@@ -410,7 +386,6 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
   const goToForgotPassword = () => {
     setAuthStep('forgot-password')
     setError('')
-    setSuccess('')
     setFormData((prev) => ({
       ...prev,
       otp: '',
@@ -421,7 +396,6 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
   const goBackToLogin = () => {
     setAuthStep('login')
     setError('')
-    setSuccess('')
 
     setFormData((prev) => ({
       ...prev,
@@ -513,12 +487,6 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
         {error && (
           <div className="auth-message auth-error">
             {error}
-          </div>
-        )}
-
-        {success && (
-          <div className="auth-message auth-success">
-            {success}
           </div>
         )}
 
@@ -672,7 +640,11 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
                   inputMode="numeric"
                   maxLength={6}
                   value={formData.otp}
-                  onChange={handleChange}
+                  onChange={(event) => {
+                    const otp = event.target.value.replace(/\D/g, '').slice(0, 6)
+                    setFormData((prev) => ({ ...prev, otp }))
+                    setError('')
+                  }}
                   placeholder="Enter 6 digit OTP"
                 />
               </div>

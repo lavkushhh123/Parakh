@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import Button from '../components/Button'
+import { signupUser } from '../services/api'
 
 function Signup() {
 
@@ -14,9 +16,7 @@ function Signup() {
     education: '',
     degree: '',
   })
-
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const [loading, setLoading] = useState(false)
 
   // Handle input changes
   const handleChange = (event) => {
@@ -35,15 +35,14 @@ function Signup() {
       return 'Name is required.'
     }
 
-    if (!formData.email.includes('@')) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
       return 'Please enter a valid email.'
     }
 
-    const passwordRegex =
-      /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/
 
     if (!passwordRegex.test(formData.password)) {
-      return 'Password must be 8-20 characters and contain letters and numbers.'
+      return 'Password must be 8-20 characters and contain at least one letter and one number.'
     }
 
     if (!formData.education.trim()) {
@@ -58,40 +57,47 @@ function Signup() {
   }
 
   // Handle signup
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-
-    setError('')
-    setSuccess('')
 
     const validationError = validateForm()
 
     if (validationError) {
-      setError(validationError)
+      toast.error(validationError)
       return
     }
 
-    // API ke liye ready request data
     const requestData = {
       name: formData.name.trim(),
-      email: formData.email.trim(),
+      email: formData.email.trim().toLowerCase(),
       password: formData.password,
       education: formData.education.trim(),
       degree: formData.degree.trim(),
     }
 
-    console.log('Signup Request:', requestData)
+    try {
+      setLoading(true)
+      const response = await signupUser(requestData)
 
-    // OTP page ke liye email temporarily save karo
-    localStorage.setItem(
-      'signupEmail',
-      requestData.email
-    )
+      if (!response) {
+        toast.error('Something Went Wrong')
+        return
+      }
 
-    setSuccess('Account details are valid.')
-
-    // Signup ke baad OTP verification page
-    navigate('/verify-otp')
+      localStorage.setItem(
+        'signupEmail',
+        response.email || requestData.email
+      )
+      localStorage.setItem('signupName', requestData.name)
+      toast.success(
+        response.message || 'Account created. OTP sent to your email.'
+      )
+      navigate('/verify-otp')
+    } catch (error) {
+      console.error('Signup failed:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -121,20 +127,6 @@ function Signup() {
 
         </div>
 
-        {/* Error message */}
-        {error && (
-          <div className="auth-message auth-error">
-            {error}
-          </div>
-        )}
-
-        {/* Success message */}
-        {success && (
-          <div className="auth-message auth-success">
-            {success}
-          </div>
-        )}
-
         <form onSubmit={handleSubmit}>
 
           {/* Name */}
@@ -149,6 +141,8 @@ function Signup() {
               name="name"
               type="text"
               value={formData.name}
+              autoComplete="name"
+              required
               onChange={handleChange}
               placeholder="Enter your name"
             />
@@ -167,6 +161,8 @@ function Signup() {
               name="email"
               type="email"
               value={formData.email}
+              autoComplete="email"
+              required
               onChange={handleChange}
               placeholder="Enter your email"
             />
@@ -185,6 +181,8 @@ function Signup() {
               name="password"
               type="password"
               value={formData.password}
+              autoComplete="new-password"
+              required
               onChange={handleChange}
               placeholder="8-20 characters with letters and numbers"
             />
@@ -203,6 +201,7 @@ function Signup() {
               name="education"
               type="text"
               value={formData.education}
+              required
               onChange={handleChange}
               placeholder="Example: B.Tech"
             />
@@ -221,6 +220,7 @@ function Signup() {
               name="degree"
               type="text"
               value={formData.degree}
+              required
               onChange={handleChange}
               placeholder="Example: Computer Science"
             />
@@ -228,8 +228,8 @@ function Signup() {
           </div>
 
           {/* Signup button */}
-          <Button type="submit">
-            Create Account
+          <Button type="submit" disabled={loading}>
+            {loading ? 'Creating account...' : 'Create Account'}
           </Button>
 
         </form>
