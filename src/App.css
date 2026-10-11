@@ -2267,7 +2267,7 @@ a {
 }
 
 /* =========================================
-   AUTH MODAL TABS
+   AUTH MODAL TABS (Top Switcher)
 ========================================= */
 
 .auth-modal-tabs {
@@ -2275,34 +2275,60 @@ a {
   align-items: center;
   background: var(--soft-bg);
   border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 4px;
+  border-radius: 12px;
+  padding: 5px;
   margin-bottom: 22px;
-  gap: 4px;
+  gap: 6px;
 }
 
 .auth-modal-tab {
   flex: 1;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 9px;
   background: transparent;
   color: var(--text-secondary);
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   text-align: center;
+  user-select: none;
+}
+
+.auth-modal-tab svg {
+  transition: transform 0.2s ease;
 }
 
 .auth-modal-tab:hover {
   color: var(--text-main);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="dark"] .auth-modal-tab:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .auth-modal-tab.active {
   background: var(--card-bg);
   color: var(--primary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-color: var(--border-color);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .auth-modal-tab.active {
+  background: #1e293b;
+  color: #60a5fa;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+}
+
+.auth-modal-tab.active svg {
+  transform: scale(1.08);
 }
 
 /* =========================================
@@ -2347,46 +2373,89 @@ a {
 
 
 /* =========================================
-   NAVBAR AUTH BUTTONS
+   NAVBAR AUTH BUTTONS (Login & Signup on top)
 ========================================= */
 
 .navbar-auth-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 8px;
 
-  padding: 8px 13px;
+  padding: 8px 16px;
 
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 9999px;
 
-  background: var(--card-bg);
-  color: var(--text-main);
-
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 600;
+  letter-spacing: 0.01em;
 
   cursor: pointer;
 
-  transition: 0.2s ease;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.navbar-auth-button:hover {
+.navbar-auth-button svg {
+  transition: transform 0.2s ease;
+}
+
+.navbar-login-button {
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-main);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.navbar-login-button:hover {
   background: var(--soft-bg);
-  border-color: var(--input-border);
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+}
+
+.navbar-login-button:hover svg {
+  transform: translateX(2px);
+}
+
+.navbar-login-button:active {
+  transform: translateY(0);
+}
+
+[data-theme="dark"] .navbar-login-button {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .navbar-login-button:hover {
+  background: rgba(37, 99, 235, 0.15);
+  border-color: #3b82f6;
+  color: #60a5fa;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
 }
 
 .navbar-signup-button {
-  background: var(--primary);
-  border-color: var(--primary);
+  border: 1px solid var(--primary);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #ffffff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 }
 
 .navbar-signup-button:hover {
-  background: #1d4ed8;
-  border-color: #1d4ed8;
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  border-color: #1e40af;
   color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
+}
+
+.navbar-signup-button:hover svg {
+  transform: scale(1.1);
+}
+
+.navbar-signup-button:active {
+  transform: translateY(0);
 }
 
 

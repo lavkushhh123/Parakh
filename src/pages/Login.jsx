@@ -85,6 +85,7 @@ function Login() {
       }
 
       localStorage.setItem('isLoggedIn', 'true')
+      window.dispatchEvent(new Event('auth-change'))
       toast.success(response.message || 'Login successful')
       navigate('/')
     } catch (error) {

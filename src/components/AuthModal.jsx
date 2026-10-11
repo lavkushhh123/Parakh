@@ -10,6 +10,8 @@ import {
   Eye,
   EyeOff,
   X,
+  LogIn,
+  UserPlus,
 } from 'lucide-react'
 
 import Button from './Button'
@@ -203,6 +205,7 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
       }
 
       toast.success(response.message || 'Login successful')
+      window.dispatchEvent(new Event('auth-change'))
       onClose()
       navigate('/')
     } catch (error) {
@@ -279,6 +282,7 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
         localStorage.setItem('studentProfile', JSON.stringify(profileData))
 
         toast.success(response.message || 'Account created successfully')
+        window.dispatchEvent(new Event('auth-change'))
         onClose()
         navigate('/')
       } else {
@@ -478,14 +482,16 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
             className={`auth-modal-tab ${authStep === 'login' ? 'active' : ''}`}
             onClick={() => switchAuthMode('login')}
           >
-            Login
+            <LogIn size={15} />
+            <span>Login</span>
           </button>
           <button
             type="button"
             className={`auth-modal-tab ${authStep === 'signup' ? 'active' : ''}`}
             onClick={() => switchAuthMode('signup')}
           >
-            Create Account
+            <UserPlus size={15} />
+            <span>Sign Up</span>
           </button>
         </div>
 
@@ -748,56 +754,17 @@ function AuthModal({ mode = 'login', onClose, onModeChange }) {
             </>
           )}
 
-          {authStep === 'signup' ? (
-            <div className="auth-buttons-row">
-              <Button
-                type="submit"
-                disabled={loading}
-              >
-                {loading ? 'Please wait...' : 'Create Account'}
-              </Button>
-
-              <button
-                type="button"
-                className="auth-secondary-btn"
-                onClick={() => switchAuthMode('login')}
-              >
-                Login
-              </button>
-            </div>
-          ) : (
-            <Button
-              type="submit"
-              disabled={loading}
-            >
-              {loading ? 'Please wait...' : 'Login'}
-            </Button>
-          )}
-        </form>
-
-        <div className="auth-switch">
-          <span>
-            {authStep === 'login'
-              ? "Don't have an account?"
-              : 'Already have an account?'}
-          </span>
-
-          <button
-            type="button"
-            className="auth-link-button"
-            onClick={() =>
-              switchAuthMode(
-                authStep === 'login'
-                  ? 'signup'
-                  : 'login'
-              )
-            }
+          <Button
+            type="submit"
+            disabled={loading}
           >
-            {authStep === 'login'
-              ? 'Sign Up'
-              : 'Login'}
-          </button>
-        </div>
+            {loading
+              ? 'Please wait...'
+              : authStep === 'login'
+                ? 'Login'
+                : 'Create Account'}
+          </Button>
+        </form>
       </div>
     </div>
   )

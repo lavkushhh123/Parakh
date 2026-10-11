@@ -133,6 +133,7 @@ function Signup() {
         localStorage.setItem('isVerified', 'true')
         localStorage.setItem('user', JSON.stringify(userInfo))
         localStorage.setItem('studentProfile', JSON.stringify(profileData))
+        window.dispatchEvent(new Event('auth-change'))
 
         toast.success(response.message || 'Account created successfully')
         navigate('/')
@@ -294,20 +295,10 @@ function Signup() {
 
           </div>
 
-          {/* Action buttons: Create Account with Login option beside it */}
-          <div className="auth-buttons-row">
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Creating account...' : 'Create Account'}
-            </Button>
-
-            <button
-              type="button"
-              className="auth-secondary-btn"
-              onClick={() => navigate('/login')}
-            >
-              Login
-            </button>
-          </div>
+          {/* Action button */}
+          <Button type="submit" disabled={loading}>
+            {loading ? 'Creating account...' : 'Create Account'}
+          </Button>
 
         </form>
 

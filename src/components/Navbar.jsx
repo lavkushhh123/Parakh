@@ -47,6 +47,7 @@ function Navbar({
     localStorage.removeItem('skillGapResult')
     localStorage.removeItem('clusterResult')
     localStorage.removeItem('careerRecommendations')
+    window.dispatchEvent(new Event('auth-change'))
     navigate('/')
     window.location.reload()
   }
@@ -81,19 +82,19 @@ function Navbar({
         {!isLoggedIn ? (
           <>
             <button
-              className="navbar-auth-button"
+              className="navbar-auth-button navbar-login-button"
               onClick={() => openAuthModal('login')}
             >
-              <LogIn size={17} />
-              Login
+              <LogIn size={16} />
+              <span>Login</span>
             </button>
 
             <button
               className="navbar-auth-button navbar-signup-button"
               onClick={() => openAuthModal('signup')}
             >
-              <UserPlus size={17} />
-              Sign Up
+              <UserPlus size={16} />
+              <span>Sign Up</span>
             </button>
           </>
         ) : (

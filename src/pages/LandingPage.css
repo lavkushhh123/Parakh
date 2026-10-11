@@ -1,0 +1,741 @@
+/* =========================================================
+   PARAKH CLEAN SAAS LANDING PAGE (MATCHING MOCKUP)
+   Clean, Professional, Non-AI-Generated Look
+========================================================= */
+
+.parakh-landing {
+  min-height: 100vh;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+[data-theme="dark"] .parakh-landing {
+  background-color: #0b1120;
+  color: #f8fafc;
+}
+
+/* =========================================================
+   01. NAVBAR
+========================================================= */
+.parakh-navbar {
+  height: 72px;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+}
+
+[data-theme="dark"] .parakh-navbar {
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
+}
+
+.parakh-nav-inner {
+  max-width: 1260px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Brand Logo with 3 vertical bars */
+.parakh-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.logo-bars-icon {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 22px;
+}
+
+.logo-bars-icon .bar {
+  width: 4px;
+  border-radius: 2px;
+  background: #2563eb;
+}
+
+.logo-bars-icon .bar-1 {
+  height: 12px;
+  opacity: 0.7;
+}
+
+.logo-bars-icon .bar-2 {
+  height: 17px;
+  opacity: 0.9;
+}
+
+.logo-bars-icon .bar-3 {
+  height: 22px;
+  opacity: 1;
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 850;
+  letter-spacing: 0.5px;
+  color: #0f172a;
+}
+
+[data-theme="dark"] .logo-text {
+  color: #ffffff;
+}
+
+/* Nav items with active underline indicator */
+.parakh-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: #475569;
+  padding: 8px 2px;
+  position: relative;
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+
+[data-theme="dark"] .nav-item {
+  color: #94a3b8;
+}
+
+.nav-item:hover {
+  color: #2563eb;
+}
+
+.nav-item.active {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background: #2563eb;
+  border-radius: 2px;
+}
+
+/* Nav Actions */
+.parakh-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.theme-switch-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .theme-switch-btn {
+  background: #1e293b;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+.theme-switch-btn:hover {
+  color: #2563eb;
+  border-color: #2563eb;
+}
+
+.btn-signin-text {
+  background: none;
+  border: none;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .btn-signin-text {
+  color: #cbd5e1;
+}
+
+.btn-signin-text:hover {
+  color: #2563eb;
+  background: #f1f5f9;
+}
+
+[data-theme="dark"] .btn-signin-text:hover {
+  background: #1e293b;
+}
+
+.btn-get-started {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+
+.btn-get-started:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+
+/* =========================================================
+   02. HERO SECTION
+========================================================= */
+.parakh-hero-section {
+  background: linear-gradient(180deg, #edf4ff 0%, #ffffff 85%);
+  padding: 48px 0 36px 0;
+  position: relative;
+}
+
+[data-theme="dark"] .parakh-hero-section {
+  background: linear-gradient(180deg, #0e172a 0%, #0b1120 85%);
+}
+
+.hero-inner-container {
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: 40px;
+}
+
+.hero-left-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  margin-bottom: 22px;
+  width: fit-content;
+}
+
+[data-theme="dark"] .hero-pill-badge {
+  background: rgba(37, 99, 235, 0.2);
+  color: #93c5fd;
+}
+
+.hero-main-title {
+  font-size: 52px;
+  font-weight: 850;
+  line-height: 1.15;
+  letter-spacing: -1px;
+  color: #0f172a;
+  margin-bottom: 18px;
+}
+
+[data-theme="dark"] .hero-main-title {
+  color: #ffffff;
+}
+
+.hero-main-title .text-blue {
+  color: #2563eb;
+}
+
+.hero-subtext {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #475569;
+  margin-bottom: 28px;
+}
+
+[data-theme="dark"] .hero-subtext {
+  color: #94a3b8;
+}
+
+.hero-btn-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.btn-hero-primary {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.28);
+}
+
+.btn-hero-primary:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.38);
+}
+
+.btn-hero-secondary {
+  background: #ffffff;
+  color: #334155;
+  border: 1.5px solid #cbd5e1;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 11px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .btn-hero-secondary {
+  background: #1e293b;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.btn-hero-secondary:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+[data-theme="dark"] .btn-hero-secondary:hover {
+  background: #334155;
+}
+
+/* Hero Right Illustration */
+.hero-right-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.illustration-wrapper {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px -8px rgba(37, 99, 235, 0.12);
+  background: #ffffff;
+}
+
+.hero-vector-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* =========================================================
+   03. 4 FEATURE CARDS ROW
+========================================================= */
+.parakh-cards-section {
+  padding: 24px 0 54px 0;
+  background: #ffffff;
+}
+
+[data-theme="dark"] .parakh-cards-section {
+  background: #0b1120;
+}
+
+.cards-inner-container {
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+
+.feature-box-card {
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  border-radius: 16px;
+  padding: 26px 22px 20px 22px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+
+[data-theme="dark"] .feature-box-card {
+  background: #131c31;
+  border-color: #1e293b;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.feature-box-card:hover {
+  transform: translateY(-4px);
+  border-color: #bfdbfe;
+  box-shadow: 0 12px 26px rgba(37, 99, 235, 0.1);
+}
+
+[data-theme="dark"] .feature-box-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.4);
+}
+
+.card-icon-bubble {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.bubble-blue {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.bubble-green {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.bubble-purple {
+  background: #faf5ff;
+  color: #9333ea;
+}
+
+.bubble-amber {
+  background: #fffbeb;
+  color: #f59e0b;
+}
+
+[data-theme="dark"] .bubble-blue {
+  background: rgba(37, 99, 235, 0.18);
+  color: #60a5fa;
+}
+
+[data-theme="dark"] .bubble-green {
+  background: rgba(22, 163, 74, 0.18);
+  color: #4ade80;
+}
+
+[data-theme="dark"] .bubble-purple {
+  background: rgba(147, 51, 234, 0.18);
+  color: #c084fc;
+}
+
+[data-theme="dark"] .bubble-amber {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fbbf24;
+}
+
+.card-heading {
+  font-size: 16.5px;
+  font-weight: 750;
+  color: #0f172a;
+  margin-bottom: 10px;
+}
+
+[data-theme="dark"] .card-heading {
+  color: #ffffff;
+}
+
+.card-paragraph {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #64748b;
+  margin-bottom: 24px;
+  flex: 1;
+}
+
+[data-theme="dark"] .card-paragraph {
+  color: #94a3b8;
+}
+
+.card-arrow-link {
+  align-self: flex-end;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+[data-theme="dark"] .card-arrow-link {
+  color: #cbd5e1;
+}
+
+.feature-box-card:hover .card-arrow-link {
+  color: #2563eb;
+  transform: translateX(4px);
+}
+
+/* =========================================================
+   04. WHY CHOOSE US SECTION
+========================================================= */
+.parakh-why-section {
+  padding: 40px 0 60px 0;
+  background: #ffffff;
+}
+
+[data-theme="dark"] .parakh-why-section {
+  background: #0b1120;
+}
+
+.why-inner-container {
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 50px;
+  align-items: center;
+}
+
+.why-left-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.why-pretitle {
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: 0.8px;
+  color: #2563eb;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.why-heading {
+  font-size: 32px;
+  font-weight: 850;
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+  color: #0f172a;
+  margin-bottom: 14px;
+}
+
+[data-theme="dark"] .why-heading {
+  color: #ffffff;
+}
+
+.why-body-text {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: #64748b;
+  max-width: 440px;
+}
+
+[data-theme="dark"] .why-body-text {
+  color: #94a3b8;
+}
+
+/* 2x2 Feature Grid */
+.why-right-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 36px;
+  row-gap: 28px;
+}
+
+.why-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.item-icon-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.circle-blue {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.circle-purple {
+  background: #faf5ff;
+  color: #9333ea;
+}
+
+.circle-green {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.circle-sky {
+  background: #f0f9ff;
+  color: #0284c7;
+}
+
+[data-theme="dark"] .circle-blue {
+  background: rgba(37, 99, 235, 0.2);
+  color: #60a5fa;
+}
+
+[data-theme="dark"] .circle-purple {
+  background: rgba(147, 51, 234, 0.2);
+  color: #c084fc;
+}
+
+[data-theme="dark"] .circle-green {
+  background: rgba(22, 163, 74, 0.2);
+  color: #4ade80;
+}
+
+[data-theme="dark"] .circle-sky {
+  background: rgba(2, 132, 199, 0.2);
+  color: #38bdf8;
+}
+
+.item-text-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-title {
+  font-size: 15px;
+  font-weight: 750;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+[data-theme="dark"] .item-title {
+  color: #ffffff;
+}
+
+.item-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #64748b;
+  margin: 0;
+}
+
+[data-theme="dark"] .item-desc {
+  color: #94a3b8;
+}
+
+/* =========================================================
+   05. BOTTOM DARK CURVED WAVE
+========================================================= */
+.bottom-wave-container {
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  margin-top: auto;
+}
+
+.bottom-wave-svg {
+  width: 100%;
+  height: 60px;
+  display: block;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 1080px) {
+  .hero-inner-container {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .hero-main-title {
+    font-size: 42px;
+  }
+
+  .cards-inner-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .why-inner-container {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+}
+
+@media (max-width: 768px) {
+  .parakh-nav-links {
+    display: none;
+  }
+
+  .parakh-nav-inner {
+    padding: 0 20px;
+  }
+
+  .hero-inner-container {
+    padding: 0 20px;
+  }
+
+  .hero-main-title {
+    font-size: 34px;
+  }
+
+  .cards-inner-container {
+    grid-template-columns: 1fr;
+    padding: 0 20px;
+  }
+
+  .why-inner-container {
+    padding: 0 20px;
+  }
+
+  .why-right-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .desktop-break {
+    display: none;
+  }
+}
